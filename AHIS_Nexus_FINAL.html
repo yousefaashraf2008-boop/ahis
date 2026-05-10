@@ -1,0 +1,2595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AHIS Nexus — Smart Campus Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --blue:#1B4FD8;--blue2:#3B82F6;--blue-l:#EEF3FF;--blue-ll:#F5F8FF;
+  --gold:#D97706;--gold-l:#FEF3C7;
+  --green:#059669;--green-l:#D1FAE5;
+  --red:#DC2626;--red-l:#FEE2E2;
+  --purple:#7C3AED;--purple-l:#EDE9FE;
+  --teal:#0891B2;--teal-l:#CFFAFE;
+  --gray50:#F8FAFC;--gray100:#F1F5F9;--gray200:#E2E8F0;
+  --gray300:#CBD5E1;--gray400:#94A3B8;--gray500:#64748B;
+  --gray600:#475569;--gray700:#334155;--gray800:#1E293B;--gray900:#0F172A;
+  --white:#fff;--font:'Plus Jakarta Sans',sans-serif;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --sh2:0 4px 16px rgba(0,0,0,.08);--sh3:0 12px 40px rgba(0,0,0,.1);
+}
+html,body{height:100%;height:100dvh;background:var(--gray50);font-family:var(--font);font-size:14px;color:var(--gray800);overflow:hidden;-webkit-tap-highlight-color:transparent;}
+* {touch-action:manipulation;}
+/* SHELL */
+#app{display:flex;height:100vh;}
+/* SIDEBAR */
+#sb{width:230px;flex-shrink:0;background:var(--white);border-right:1px solid var(--gray200);display:flex;flex-direction:column;overflow-y:auto;}
+#sb::-webkit-scrollbar{width:0;}
+.sb-logo{padding:16px 18px;border-bottom:1px solid var(--gray100);display:flex;align-items:center;gap:10px;cursor:pointer;}
+.sb-logo-ic{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.sb-logo-txt{font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--gray900);}
+.sb-logo-txt span{color:var(--blue);}
+.sb-logo-sub{font-size:10px;color:var(--gray400);font-weight:500;}
+.sb-user{margin:12px;padding:11px 12px;background:var(--gray50);border-radius:10px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s;}
+.sb-user:hover{background:var(--gray100);}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.av-s{background:linear-gradient(135deg,var(--blue),var(--blue2));}
+.av-t{background:linear-gradient(135deg,var(--gold),#FBBF24);}
+.av-p{background:linear-gradient(135deg,var(--teal),#22D3EE);}
+.u-name{font-size:13px;font-weight:600;color:var(--gray800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.u-role{font-size:10px;color:var(--gray400);}
+.u-dot{width:7px;height:7px;border-radius:50%;background:var(--green);margin-left:auto;flex-shrink:0;}
+.nav-sec{padding:8px 18px 3px;font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.08em;text-transform:uppercase;}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 10px;margin:1px 8px;border-radius:8px;font-size:13px;font-weight:500;color:var(--gray600);cursor:pointer;transition:.15s;user-select:none;}
+.ni:hover{background:var(--gray50);color:var(--gray800);}
+.ni.a{background:var(--blue-l);color:var(--blue);font-weight:600;}
+.ni.ag{background:#FFFBEB;color:var(--gold);font-weight:600;}
+.ni.at{background:var(--teal-l);color:var(--teal);font-weight:600;}
+.ni-ic{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.ni-badge{margin-left:auto;background:var(--red);color:#fff;border-radius:100px;font-size:9px;font-weight:700;padding:2px 6px;}
+.sb-bot{margin-top:auto;padding:10px 8px;border-top:1px solid var(--gray100);}
+.sb-bot-btn{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;font-size:12px;color:var(--gray500);cursor:pointer;transition:.15s;}
+.sb-bot-btn:hover{background:var(--gray50);color:var(--gray700);}
+/* MAIN */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+/* TOPBAR */
+#tb{display:flex;align-items:center;gap:12px;padding:0 24px;height:56px;background:var(--white);border-bottom:1px solid var(--gray200);flex-shrink:0;}
+.tb-t{font-size:16px;font-weight:700;color:var(--gray900);}
+.tb-s{font-size:11px;color:var(--gray400);}
+.role-sw{display:flex;background:var(--gray100);border-radius:100px;padding:3px;gap:2px;margin-left:auto;}
+.rbtn{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray500);border:none;background:transparent;font-family:var(--font);transition:.2s;}
+.rbtn-short{display:none;}
+@media(max-width:480px){.rbtn-full{display:none;}.rbtn-short{display:inline;}.rbtn{padding:6px 10px;}.role-sw{display:flex !important;}}
+.rbtn-short{display:none;}
+@media(max-width:480px){.rbtn-full{display:none;}.rbtn-short{display:inline;}.rbtn{padding:6px 10px;}.role-sw{display:flex !important;}}
+.rbtn-short{display:none;}
+@media(max-width:480px){
+  .rbtn-full{display:none;}
+  .rbtn-short{display:inline;}
+  .rbtn{padding:6px 10px;}
+  .role-sw{display:flex !important;}
+}
+.rbtn.act{background:var(--white);color:var(--gray800);box-shadow:var(--sh);}
+.ai-pill{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--green-l);border-radius:100px;font-size:11px;font-weight:600;color:var(--green);}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* CONTENT */
+#ct{flex:1;overflow-y:auto;padding:24px 28px;background:var(--gray50);}
+#ct::-webkit-scrollbar{width:5px;}
+#ct::-webkit-scrollbar-thumb{background:var(--gray200);border-radius:3px;}
+.view{display:none;animation:fu .3s ease both;}
+.view.act{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* PAGE HEADER */
+.ph{margin-bottom:20px;}
+.ph h1{font-size:22px;font-weight:800;color:var(--gray900);letter-spacing:-.03em;}
+.ph p{font-size:13px;color:var(--gray500);margin-top:3px;}
+/* AI ALERT */
+.aia{display:flex;align-items:flex-start;gap:12px;border-radius:12px;padding:14px 18px;margin-bottom:20px;border:1px solid;}
+.aia-blue{background:linear-gradient(135deg,#EEF3FF,#E0EAFF);border-color:#C7D7FF;}
+.aia-gold{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-color:#FDE68A;}
+.aia-teal{background:linear-gradient(135deg,#ECFEFF,#CFFAFE);border-color:#A5F3FC;}
+.aia-red{background:linear-gradient(135deg,#FFF5F5,var(--red-l));border-color:#FECACA;}
+.aia-ic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ic-blue{background:var(--blue);} .ic-gold{background:var(--gold);} .ic-teal{background:var(--teal);} .ic-red{background:var(--red);}
+.aia-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+.lbl-blue{color:var(--blue);} .lbl-gold{color:var(--gold);} .lbl-teal{color:var(--teal);} .lbl-red{color:var(--red);}
+.aia-txt{font-size:13px;color:var(--gray700);line-height:1.5;}
+.aia-txt strong{color:var(--gray900);}
+/* GRIDS */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.g1{margin-bottom:20px;}
+/* STAT CARD */
+.sc{background:var(--white);border:1px solid var(--gray200);border-radius:12px;padding:18px 20px;transition:.2s;cursor:pointer;}
+.sc:hover{box-shadow:var(--sh2);transform:translateY(-1px);}
+.sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sc-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.ic-bl{background:var(--blue-l);} .ic-gr{background:var(--green-l);} .ic-go{background:var(--gold-l);} .ic-re{background:var(--red-l);} .ic-pu{background:var(--purple-l);} .ic-te{background:var(--teal-l);}
+.delta{font-size:11px;font-weight:600;padding:3px 7px;border-radius:100px;}
+.d-up{background:var(--green-l);color:var(--green);}
+.d-dn{background:var(--red-l);color:var(--red);}
+.d-nu{background:var(--gray100);color:var(--gray500);}
+.sc-val{font-size:26px;font-weight:800;color:var(--gray900);letter-spacing:-.03em;margin-bottom:2px;}
+.sc-lbl{font-size:12px;color:var(--gray500);font-weight:500;}
+.sc-bar{height:4px;background:var(--gray100);border-radius:2px;margin-top:10px;overflow:hidden;}
+.bf{height:100%;border-radius:2px;animation:grow 1.2s ease-out;}
+@keyframes grow{from{width:0}}
+.bf-bl{background:linear-gradient(90deg,var(--blue2),var(--blue));}
+.bf-gr{background:linear-gradient(90deg,#34D399,var(--green));}
+.bf-go{background:linear-gradient(90deg,#FBBF24,var(--gold));}
+.bf-re{background:linear-gradient(90deg,#F87171,var(--red));}
+.bf-te{background:linear-gradient(90deg,#22D3EE,var(--teal));}
+/* CARD */
+.card{background:var(--white);border:1px solid var(--gray200);border-radius:12px;padding:20px 22px;transition:.2s;}
+.card:hover{box-shadow:var(--sh2);}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.ct{font-size:14px;font-weight:700;color:var(--gray900);}
+.cs{font-size:11px;color:var(--gray400);margin-top:1px;}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.18s;border:none;font-family:var(--font);}
+.btn:hover{opacity:.9;transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn-bl{background:var(--blue);color:#fff;}
+.btn-bl:hover{background:#1640B8;box-shadow:0 4px 12px rgba(27,79,216,.3);}
+.btn-go{background:var(--gold);color:#fff;}
+.btn-go:hover{background:#B45309;}
+.btn-te{background:var(--teal);color:#fff;}
+.btn-wh{background:var(--white);color:var(--gray700);border:1px solid var(--gray200);}
+.btn-wh:hover{background:var(--gray50);}
+.btn-gh{background:transparent;color:var(--gray500);border:1px solid var(--gray200);}
+.btn-gh:hover{background:var(--gray50);}
+.btn-re{background:var(--red-l);color:var(--red);border:1px solid #FECACA;}
+.btn-gr{background:var(--green-l);color:var(--green);border:1px solid #A7F3D0;}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-xs{padding:4px 10px;font-size:11px;}
+/* BADGES */
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;}
+.b-gr{background:var(--green-l);color:var(--green);}
+.b-re{background:var(--red-l);color:var(--red);}
+.b-bl{background:var(--blue-l);color:var(--blue);}
+.b-go{background:var(--gold-l);color:var(--gold);}
+.b-te{background:var(--teal-l);color:var(--teal);}
+.b-pu{background:var(--purple-l);color:var(--purple);}
+.b-nu{background:var(--gray100);color:var(--gray500);}
+/* SCHEDULE */
+.sched-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;margin-bottom:5px;cursor:pointer;transition:.15s;}
+.sched-row:hover{background:var(--gray50);}
+.sched-stripe{width:3px;height:36px;border-radius:2px;flex-shrink:0;}
+.sched-time{font-size:11px;color:var(--gray400);font-weight:600;min-width:40px;}
+.sched-name{font-size:13px;font-weight:600;color:var(--gray800);}
+.sched-room{font-size:11px;color:var(--gray400);}
+/* LIST ITEMS */
+.li{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;border:1px solid var(--gray100);margin-bottom:7px;cursor:pointer;transition:.15s;}
+.li:hover{border-color:var(--gray200);background:var(--gray50);box-shadow:var(--sh);}
+.li-ic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.li-name{font-size:13px;font-weight:600;color:var(--gray800);}
+.li-sub{font-size:11px;color:var(--gray400);margin-top:1px;}
+.li-end{margin-left:auto;display:flex;align-items:center;gap:8px;}
+/* DUE CHIPS */
+.due{font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;white-space:nowrap;}
+.due-re{background:var(--red-l);color:var(--red);}
+.due-go{background:var(--gold-l);color:var(--gold);}
+.due-bl{background:var(--blue-l);color:var(--blue);}
+.due-gr{background:var(--green-l);color:var(--green);}
+/* SUBJECT CARDS */
+.subj{background:var(--white);border:1px solid var(--gray200);border-radius:12px;padding:18px;cursor:pointer;transition:.2s;position:relative;overflow:hidden;}
+.subj:hover{box-shadow:var(--sh2);transform:translateY(-2px);}
+.subj-stripe{position:absolute;top:0;left:0;right:0;height:4px;}
+.subj-em{font-size:26px;margin-bottom:10px;display:block;margin-top:6px;}
+.subj-name{font-size:13px;font-weight:700;color:var(--gray900);margin-bottom:2px;}
+.subj-unit{font-size:11px;color:var(--gray400);margin-bottom:10px;}
+.subj-row{display:flex;align-items:center;justify-content:space-between;}
+.subj-grade{font-size:24px;font-weight:800;letter-spacing:-.03em;}
+.subj-bar{height:4px;background:var(--gray100);border-radius:2px;margin-top:10px;overflow:hidden;}
+.subj-hint{font-size:10px;color:var(--gray300);margin-top:7px;}
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--gray200);}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{font-size:10px;font-weight:700;color:var(--gray500);text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;border-bottom:2px solid var(--gray100);background:var(--gray50);white-space:nowrap;}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--gray100);color:var(--gray700);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--gray50);}
+.tbl td:first-child{font-weight:600;color:var(--gray900);}
+/* AGENDA */
+.ag-row{display:grid;grid-template-columns:64px 1fr;gap:8px 14px;margin-bottom:7px;}
+.ag-t{font-size:11px;color:var(--gray400);font-weight:600;padding-top:8px;}
+.ag-b{background:var(--gray50);border-radius:8px;padding:8px 12px;border-left:3px solid var(--gray200);font-size:12px;color:var(--gray700);line-height:1.5;}
+.ag-blue{border-left-color:var(--blue);}
+.ag-gold{border-left-color:var(--gold);}
+.ag-teal{border-left-color:var(--teal);}
+.ag-green{border-left-color:var(--green);}
+.ag-red{border-left-color:var(--red);}
+/* PATHWAYS */
+.pw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;}
+.pw{border:2px solid var(--gray200);border-radius:12px;padding:18px;cursor:pointer;transition:.2s;background:var(--white);}
+.pw:hover{box-shadow:var(--sh2);transform:translateY(-2px);}
+.pw.sel-a{border-color:var(--blue2);background:var(--blue-ll);}
+.pw.sel-b{border-color:var(--gold);background:#FFFBEB;}
+.pw.sel-c{border-color:var(--teal);background:#ECFEFF;}
+.pw-letter{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.pw-title{font-size:14px;font-weight:700;color:var(--gray900);margin-bottom:6px;}
+.pw-desc{font-size:12px;color:var(--gray500);line-height:1.55;}
+.pw-ck{display:none;font-size:11px;font-weight:700;margin-top:8px;}
+.pw.sel-a .pw-ck,.pw.sel-b .pw-ck,.pw.sel-c .pw-ck{display:block;}
+/* MAGIC DROP */
+.md-zone{border:2px dashed var(--gray200);border-radius:12px;padding:30px;text-align:center;cursor:pointer;transition:.25s;background:var(--gray50);position:relative;overflow:hidden;}
+.md-zone:hover{border-color:var(--gold);background:#FFFBEB;}
+.md-zone.proc{border-color:var(--gold);border-style:solid;background:#FFFBEB;animation:glow 1.5s infinite;}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,0)}50%{box-shadow:0 0 20px 4px rgba(217,119,6,.12)}}
+.pcanvas{position:absolute;inset:0;pointer-events:none;}
+.md-prog{margin-top:14px;display:none;}
+.md-zone.proc .md-prog{display:block;}
+.prog-track{height:6px;background:var(--gray200);border-radius:3px;overflow:hidden;margin-bottom:5px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,#FBBF24,var(--gold));border-radius:3px;width:0;transition:width .4s ease;}
+.prog-lbl{font-size:11px;font-weight:600;color:var(--gold);}
+/* SCAN ZONE */
+.scan-zone{border:2px dashed var(--gray200);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:.2s;background:var(--gray50);position:relative;overflow:hidden;}
+.scan-zone:hover{border-color:var(--blue);background:var(--blue-ll);}
+.scan-zone.scanning{border-color:var(--blue);border-style:solid;background:var(--blue-ll);}
+.scan-laser{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:0;animation:laser 1.8s linear infinite;}
+.scan-zone.scanning .scan-laser{opacity:1;}
+@keyframes laser{0%{top:0}100%{top:100%}}
+/* SCORE BARS */
+.sbr-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.sbr-lbl{font-size:12px;color:var(--gray700);min-width:150px;}
+.sbr-track{flex:1;height:8px;background:var(--gray100);border-radius:4px;overflow:hidden;}
+.sbr-fill{height:100%;border-radius:4px;animation:grow 1.5s ease-out;}
+.sbr-val{font-size:12px;font-weight:700;min-width:36px;text-align:right;}
+/* FLAG */
+.flag{background:var(--red-l);border:1px solid #FECACA;border-radius:10px;padding:14px 16px;margin-top:14px;}
+.flag-hd{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.flag-q{font-size:12px;color:var(--gray700);font-style:italic;background:rgba(255,255,255,.7);border-radius:6px;padding:10px;border-left:3px solid var(--red);margin-bottom:8px;line-height:1.6;}
+.flag-p{font-size:12px;color:var(--gray700);line-height:1.6;}
+/* FEED ITEMS */
+.feed{background:var(--white);border:1px solid var(--gray200);border-radius:12px;padding:16px 18px;margin-bottom:12px;cursor:pointer;transition:.2s;display:flex;gap:14px;}
+.feed:hover{box-shadow:var(--sh2);border-color:var(--gray300);}
+.feed.f-warn{border-color:#FDE68A;background:linear-gradient(135deg,#FFFEF5,#FFFBEB);}
+.feed.f-alert{border-color:#C7D7FF;background:linear-gradient(135deg,#FAFCFF,#EEF3FF);}
+.feed.f-good{border-color:#A7F3D0;background:linear-gradient(135deg,#F8FFFC,#F0FDF9);}
+.feed.f-red{border-color:#FECACA;background:linear-gradient(135deg,#FFF5F5,var(--red-l));}
+.feed-ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.feed-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+.feed-title{font-size:14px;font-weight:700;color:var(--gray900);margin-bottom:3px;}
+.feed-desc{font-size:12px;color:var(--gray500);line-height:1.55;}
+.feed-acts{display:flex;gap:7px;margin-top:10px;}
+/* SUBJ PROGRESS */
+.sp-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.sp-name{font-size:13px;color:var(--gray700);min-width:140px;}
+.sp-track{flex:1;height:8px;background:var(--gray100);border-radius:4px;overflow:hidden;}
+.sp-fill{height:100%;border-radius:4px;animation:grow 1.3s ease-out;}
+.sp-val{font-size:12px;font-weight:700;min-width:36px;text-align:right;}
+/* MODALS / PANELS */
+#rag-panel{position:fixed;top:0;right:-440px;bottom:0;width:420px;background:var(--white);border-left:1px solid var(--gray200);z-index:500;display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,.08);transition:right .35s cubic-bezier(.34,1.2,.64,1);}
+#rag-panel.open{right:0;}
+.rp-hd{padding:18px 20px;border-bottom:1px solid var(--gray100);display:flex;align-items:center;gap:12px;}
+.rp-sic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:var(--blue-l);}
+.rp-name{font-size:15px;font-weight:700;color:var(--gray900);}
+.rp-hint{font-size:11px;color:var(--blue);font-weight:600;margin-top:1px;}
+.rp-close{margin-left:auto;width:30px;height:30px;border-radius:8px;background:var(--gray100);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;border:none;color:var(--gray500);transition:.15s;}
+.rp-close:hover{background:var(--gray200);}
+.rp-msgs{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px;}
+.rp-msgs::-webkit-scrollbar{width:3px;}
+.rp-msgs::-webkit-scrollbar-thumb{background:var(--gray200);border-radius:2px;}
+.msg{padding:10px 13px;border-radius:10px;font-size:13px;line-height:1.55;max-width:90%;}
+.msg-ai{background:var(--gray50);border:1px solid var(--gray200);align-self:flex-start;border-radius:4px 10px 10px 10px;color:var(--gray700);}
+.msg-usr{background:var(--blue);align-self:flex-end;border-radius:10px 4px 10px 10px;color:#fff;}
+.typing{display:flex;gap:4px;align-items:center;padding:10px 13px;background:var(--gray50);border:1px solid var(--gray200);border-radius:4px 10px 10px 10px;align-self:flex-start;width:58px;}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--gray400);animation:td 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:.2s;}.typing span:nth-child(3){animation-delay:.4s;}
+@keyframes td{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.rp-inp-row{padding:14px 18px;border-top:1px solid var(--gray100);display:flex;gap:10px;}
+.rp-inp{flex:1;border:1px solid var(--gray200);border-radius:8px;padding:10px 13px;font-size:13px;font-family:var(--font);outline:none;color:var(--gray800);background:var(--gray50);transition:.2s;}
+.rp-inp:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(27,79,216,.08);}
+/* EMAIL DRAWER */
+#email-drawer{position:fixed;bottom:-100%;left:0;right:0;z-index:500;max-height:75vh;background:var(--white);border-top:1px solid var(--gray200);border-radius:20px 20px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.1);display:flex;flex-direction:column;transition:bottom .35s cubic-bezier(.34,1.2,.64,1);}
+#email-drawer.open{bottom:0;}
+.dr-pill{width:40px;height:4px;background:var(--gray200);border-radius:2px;margin:12px auto 0;}
+.dr-hd{padding:14px 24px;border-bottom:1px solid var(--gray100);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.dr-title{font-size:16px;font-weight:700;color:var(--gray900);}
+.tone-row{display:flex;background:var(--gray100);border-radius:100px;padding:3px;gap:2px;margin-left:auto;}
+.tone-btn{padding:5px 12px;border-radius:100px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--gray500);font-family:var(--font);transition:.2s;}
+.tone-btn.act{background:var(--white);color:var(--gray800);box-shadow:var(--sh);}
+.email-prev{background:var(--gray50);border:1px solid var(--gray200);border-radius:10px;padding:16px;font-size:13px;color:var(--gray700);line-height:1.75;min-height:100px;white-space:pre-wrap;overflow-y:auto;max-height:220px;}
+.cursor-blink{display:inline-block;width:2px;height:14px;background:var(--blue);margin-left:1px;animation:blink 1s step-end infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.dr-body{padding:18px 24px;overflow-y:auto;flex:1;}
+.dr-foot{padding:14px 24px;border-top:1px solid var(--gray100);display:flex;gap:10px;align-items:center;}
+/* BOT */
+#bot-fab{position:fixed;bottom:24px;right:24px;z-index:600;width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 8px 24px rgba(27,79,216,.3);border:none;animation:bfloat 3s ease-in-out infinite;}
+@keyframes bfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+#bot-win{position:fixed;bottom:88px;right:24px;z-index:600;width:360px;max-height:480px;background:var(--white);border:1px solid var(--gray200);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--sh3);transition:all .3s cubic-bezier(.34,1.3,.64,1);transform-origin:bottom right;}
+#bot-win.closed{transform:scale(.8);opacity:0;pointer-events:none;}
+.bw-hd{padding:14px 16px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:flex;align-items:center;gap:10px;}
+.bw-av{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.bw-nm{font-size:14px;font-weight:700;color:#fff;}
+.bw-st{font-size:10px;color:rgba(255,255,255,.75);}
+.lang-row{margin-left:auto;display:flex;gap:4px;}
+.lng{padding:4px 9px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,.7);font-family:var(--font);transition:.15s;}
+.lng.act{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.5);}
+.bw-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--gray50);}
+.bw-msgs::-webkit-scrollbar{width:2px;}
+.bubble{padding:10px 13px;border-radius:10px;font-size:13px;line-height:1.5;max-width:90%;}
+.bbl-ai{background:var(--white);border:1px solid var(--gray200);align-self:flex-start;border-radius:4px 10px 10px 10px;color:var(--gray700);}
+.bbl-usr{background:var(--blue);align-self:flex-end;border-radius:10px 4px 10px 10px;color:#fff;}
+.bbl-ar{direction:rtl;font-family:system-ui,sans-serif;}
+.bw-inp-row{padding:12px 14px;border-top:1px solid var(--gray200);display:flex;gap:8px;background:var(--white);}
+.bw-inp{flex:1;border:1px solid var(--gray200);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--font);outline:none;color:var(--gray800);}
+.bw-inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(27,79,216,.08);}
+.bw-send{width:36px;height:36px;border-radius:8px;background:var(--blue);border:none;color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;}
+.bw-send:hover{background:#1640B8;}
+/* GRADEBOOK */
+.grade-header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--gray50);border-radius:8px 8px 0 0;border:1px solid var(--gray200);border-bottom:none;}
+.grade-search{flex:1;border:1px solid var(--gray200);border-radius:8px;padding:8px 12px;font-size:13px;font-family:var(--font);outline:none;background:var(--white);}
+.grade-search:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(27,79,216,.08);}
+/* NOTIFICATION */
+.notif{position:fixed;top:20px;right:20px;z-index:700;background:var(--gray900);color:#fff;border-radius:10px;padding:12px 18px;font-size:13px;font-weight:500;box-shadow:var(--sh3);transform:translateY(-80px);opacity:0;transition:.4s;pointer-events:none;}
+.notif.show{transform:translateY(0);opacity:1;}
+/* RESPONSIVE */
+/* ── MOBILE NAV BOTTOM BAR ── */
+#mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:400;
+  background:var(--white);border-top:1px solid var(--gray200);
+  padding:0 0 env(safe-area-inset-bottom,0);
+  box-shadow:0 -4px 20px rgba(0,0,0,.07);}
+.mob-nav-inner{display:flex;justify-content:space-around;align-items:stretch;}
+.mob-ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:8px 4px 6px;cursor:pointer;color:var(--gray400);transition:.2s;
+  font-size:9px;font-weight:700;letter-spacing:.03em;gap:4px;border:none;background:none;font-family:var(--font);}
+.mob-ni span.ic{display:flex;align-items:center;justify-content:center;width:24px;height:24px;transition:.2s;}
+.mob-ni span.ic svg{width:22px;height:22px;stroke:currentColor;}
+.mob-ni.act{color:var(--blue);}
+.mob-ni.act-g{color:var(--gold);}
+.mob-ni.act-t{color:var(--teal);}
+.mob-ni.act span.ic{transform:translateY(-2px);}
+.mob-ni:active{transform:scale(0.92);}
+/* SIDEBAR OVERLAY on mobile */
+#sb-overlay{display:none;position:fixed;inset:0;z-index:350;background:rgba(0,0,0,0.4);}
+#sb-overlay.show{display:block;}
+/* MOBILE HAMBURGER */
+#mob-menu-btn{display:none;width:38px;height:38px;border-radius:10px;background:var(--gray100);
+  border:none;font-size:18px;cursor:pointer;flex-shrink:0;align-items:center;justify-content:center;}
+
+/* ── TABLET (≤900px) ── */
+@media(max-width:900px){
+  #sb{position:fixed;top:0;left:-240px;bottom:0;z-index:360;width:230px;
+    transition:left .3s cubic-bezier(.34,1,.64,1);box-shadow:var(--sh3);}
+  #sb.open{left:0;}
+  #mob-menu-btn{display:flex;}
+  #bot-win{width:calc(100vw - 32px);right:16px;left:16px;max-height:60vh;}
+  .g4{grid-template-columns:repeat(2,1fr);}
+  .pw-grid{grid-template-columns:1fr;}
+  .g3{grid-template-columns:1fr 1fr;}
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .tbl th,.tbl td{white-space:nowrap;}
+  #email-drawer{max-height:85vh;}
+  #rag-panel{width:100%;right:-100%;}
+  #rag-panel.open{right:0;}
+  .email-prev{max-height:160px;}
+}
+
+/* ── PHONE (≤600px) ── */
+@media(max-width:600px){
+  html,body{overflow:hidden;}
+  #app{height:calc(100vh - 56px);height:calc(100dvh - 56px);}
+  #mob-nav{display:block;}
+  #tb{padding:0 12px 0 14px;height:52px;gap:8px;}
+  .tb-t{font-size:14px;}
+  .tb-s{display:none;}
+  .role-sw{display:none;}
+  .ai-pill{display:none;}
+  #ct{padding:14px 14px 80px;}
+  .g2{grid-template-columns:1fr;}
+  .g3{grid-template-columns:1fr 1fr;}
+  .g4{grid-template-columns:1fr 1fr;}
+  .ph h1{font-size:18px;}
+  .ph p{font-size:12px;}
+  /* Cards */
+  .card{padding:16px;}
+  .card-hd{flex-wrap:wrap;gap:8px;}
+  /* Stat cards */
+  .sc{padding:14px 16px;}
+  .sc-val{font-size:22px;}
+  /* Subjects 2-col on phone */
+  .g3.subj-grid{grid-template-columns:1fr 1fr;}
+  /* Bot */
+  #bot-fab{bottom:72px;right:16px;width:46px;height:46px;font-size:20px;}
+  #bot-win{width:calc(100vw - 24px);right:12px;left:12px;bottom:128px;max-height:55vh;}
+  /* RAG panel full screen */
+  #rag-panel{width:100%;right:-100%;top:52px;bottom:56px;}
+  #rag-panel.open{right:0;}
+  /* Email drawer */
+  #email-drawer{border-radius:20px 20px 0 0;max-height:90vh;}
+  .dr-hd{flex-wrap:wrap;gap:8px;padding:12px 16px;}
+  .dr-body{padding:14px 16px;}
+  .dr-foot{padding:10px 16px;flex-wrap:wrap;}
+  .tone-row{order:-1;width:100%;}
+  /* Tables scroll */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .tbl th,.tbl td{white-space:nowrap;font-size:12px;padding:9px 10px;}
+  /* Agenda */
+  .ag-row{grid-template-columns:46px 1fr;}
+  /* Schedule */
+  .sched-row{padding:8px;}
+  /* Feed */
+  .feed{flex-direction:column;}
+  .feed-ic{width:32px;height:32px;font-size:16px;}
+  /* Pathway grid on phone: 1 col */
+  .pw-grid{grid-template-columns:1fr;}
+  /* Score bars */
+  .sbr-lbl{min-width:100px;font-size:11px;}
+  /* Attendance grid */
+  .att-grid{gap:3px;}
+  /* Help modal */
+  #help-modal>div{margin:16px;border-radius:12px;}
+  /* Quiz options */
+  .quiz-opt{font-size:12px;padding:10px 12px;}
+  /* Subject card font */
+  .subj-name{font-size:12px;}
+  .subj-grade{font-size:20px;}
+  /* AI alert */
+  .aia{flex-direction:column;}
+  .aia .btn{width:100%;}
+}
+/* QUIZ */
+.quiz-opt{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--gray200);border-radius:8px;margin-bottom:7px;cursor:pointer;transition:.15s;font-size:13px;color:var(--gray700);background:var(--white);}
+.quiz-opt:hover{border-color:var(--blue);background:var(--blue-ll);color:var(--blue);}
+.quiz-opt.correct{border-color:var(--green);background:var(--green-l);color:var(--green);}
+.quiz-opt.wrong{border-color:var(--red);background:var(--red-l);color:var(--red);}
+.quiz-opt.disabled{cursor:default;}
+.quiz-opt.disabled:hover{border-color:var(--gray200);background:var(--white);color:var(--gray700);}
+.quiz-opt.correct.disabled:hover{border-color:var(--green);background:var(--green-l);color:var(--green);}
+.quiz-opt.wrong.disabled:hover{border-color:var(--red);background:var(--red-l);color:var(--red);}
+.tab-row{display:flex;gap:4px;background:var(--gray100);border-radius:10px;padding:3px;margin-bottom:16px;}
+.tab{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:var(--gray500);transition:.2s;}
+.tab.act{background:var(--white);color:var(--gray800);box-shadow:var(--sh);}
+/* ATTENDANCE */
+.att-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:12px 0;}
+.att-day{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;cursor:pointer;transition:.15s;}
+.att-day:hover{transform:scale(1.1);}
+.att-p{background:var(--green-l);color:var(--green);}
+.att-a{background:var(--red-l);color:var(--red);}
+.att-h{background:var(--gray100);color:var(--gray400);}
+.att-t{background:var(--gold-l);color:var(--gold);}
+/* SETTINGS */
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--gray100);}
+.settings-row:last-child{border-bottom:none;}
+.toggle{width:42px;height:24px;border-radius:100px;background:var(--gray200);cursor:pointer;transition:.2s;position:relative;flex-shrink:0;}
+.toggle.on{background:var(--blue);}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle.on::after{left:21px;}
+
+@media(max-width:600px){.mob-scroll-hint{display:block !important;}}
+/* ── MOBILE POLISH ── */
+/* Prevent double-tap zoom on buttons */
+button, .btn, .ni, .sc, .subj, .li, .feed, .sched-row, .quiz-opt {touch-action: manipulation;}
+/* Make tbl-wrap properly scrollable on mobile */
+.tbl-wrap {-webkit-overflow-scrolling: touch; overflow-x: auto;}
+/* Bigger tap targets on mobile */
+@media(max-width:600px){
+  .btn {min-height: 40px;}
+  .btn-xs {min-height: 34px; padding: 6px 10px; font-size: 11px;}
+  .ni {min-height: 40px;}
+  .quiz-opt {min-height: 44px;}
+  /* Full-width buttons in feed actions */
+  .feed-acts {flex-direction: column;}
+  .feed-acts .btn {width: 100%; justify-content: center;}
+  /* Compact AI alert */
+  .aia-ic {width: 28px; height: 28px; font-size: 14px;}
+  /* Subject grid 2-col */
+  .subj-grid {grid-template-columns: 1fr 1fr !important;}
+  /* Score bars compact */
+  .sbr-row {flex-wrap: wrap;}
+  .sbr-lbl {width: 100%; min-width: unset; margin-bottom: 4px;}
+  .sbr-track {flex: 1;}
+  /* Meeting slots */
+  .li {flex-wrap: wrap; gap: 8px;}
+  .li-end {margin-left: 0; width: 100%;}
+  .li-end .btn {width: 100%; justify-content: center;}
+  /* Drawer height on phone */
+  #email-drawer.open {max-height: 92vh;}
+  /* Top bar */
+  #tb {padding: 0 10px;}
+  /* Bot window z-index over bottom nav */
+  #bot-win {z-index: 450;}
+  /* Grade header wrap */
+  .grade-header {flex-wrap: wrap; gap: 8px; padding: 10px 12px;}
+  .grade-search {width: 100%; flex: none;}
+  /* Attendance calendar smaller */
+  .att-day {font-size: 8px;}
+  /* Progress bars on parent screen */
+  .sp-name {min-width: 100px; font-size: 12px;}
+}
+/* ── BOTTOM NAV SAFE AREA ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)){
+  #mob-nav {padding-bottom: env(safe-area-inset-bottom);}
+}
+</style>
+
+<style>
+/* ════════════════════════════════════════
+   3D CARD EFFECTS & ENHANCED VISUALS
+   ════════════════════════════════════════ */
+
+/* 3D perspective on cards */
+.card, .sc, .subj {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transform-style: preserve-3d;
+}
+.card:hover { transform: translateY(-3px) rotateX(1deg); }
+.sc:hover { transform: translateY(-4px) rotateX(2deg) scale(1.01); }
+.subj:hover { transform: translateY(-6px) rotateX(2deg) rotateY(-1deg); }
+
+/* Gradient mesh background for content area */
+#ct {
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(27,79,216,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(8,145,178,0.04) 0%, transparent 60%),
+    var(--gray50);
+}
+
+/* Glass morphism sidebar */
+#sb {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Topbar glass */
+#tb {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Enhanced stat cards with subtle gradient */
+.sc {
+  background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+  position: relative; overflow: hidden;
+}
+.sc::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(27,79,216,0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.sc:hover::before { opacity: 1; }
+
+/* Shimmer effect on loading states */
+@keyframes shimmer {
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+.shimmer {
+  background: linear-gradient(90deg, var(--gray100) 25%, var(--gray50) 50%, var(--gray100) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Enhanced AI alert glow */
+.aia-blue { box-shadow: 0 4px 20px rgba(27,79,216,0.1); }
+.aia-gold { box-shadow: 0 4px 20px rgba(217,119,6,0.1); }
+.aia-teal { box-shadow: 0 4px 20px rgba(8,145,178,0.1); }
+.aia-red  { box-shadow: 0 4px 20px rgba(220,38,38,0.1); }
+
+/* Nav item hover glow */
+.ni:hover {
+  background: linear-gradient(135deg, var(--gray50), rgba(27,79,216,0.04));
+  transform: translateX(3px);
+}
+.ni { transition: all 0.2s ease; }
+.ni.a  { box-shadow: inset 3px 0 0 var(--blue); }
+.ni.ag { box-shadow: inset 3px 0 0 var(--gold); }
+.ni.at { box-shadow: inset 3px 0 0 var(--teal); }
+
+/* Sidebar logo shimmer */
+.sb-logo-ic {
+  position: relative; overflow: hidden;
+}
+.sb-logo-ic::after {
+  content: '';
+  position: absolute; top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+  animation: logoShimmer 3s ease-in-out infinite;
+}
+@keyframes logoShimmer {
+  0%{transform:translateX(-100%) rotate(45deg);}
+  100%{transform:translateX(100%) rotate(45deg);}
+}
+
+/* Bot FAB pulse */
+#bot-fab {
+  box-shadow: 0 8px 24px rgba(27,79,216,0.4), 0 0 0 0 rgba(27,79,216,0.3);
+  animation: botPulse 3s ease-in-out infinite;
+}
+@keyframes botPulse {
+  0%,100%{box-shadow:0 8px 24px rgba(27,79,216,0.4),0 0 0 0 rgba(27,79,216,0.3);}
+  50%{box-shadow:0 12px 32px rgba(27,79,216,0.5),0 0 0 12px rgba(27,79,216,0.08);}
+}
+
+/* RAG panel slide shadow */
+#rag-panel.open {
+  box-shadow: -20px 0 60px rgba(0,0,0,0.15);
+}
+
+/* Score bars enhanced */
+.sbr-fill, .bf, .sp-fill {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Enhanced quiz options */
+.quiz-opt {
+  background: linear-gradient(135deg, #fff 0%, #f8faff 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.quiz-opt:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(27,79,216,0.12);
+}
+
+/* Pathway cards 3D */
+.pw {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative; overflow: hidden;
+}
+.pw::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.pw:hover { transform: translateY(-4px) scale(1.01); }
+
+/* Scan zone pulse */
+.scan-zone.scanning {
+  box-shadow: 0 0 30px rgba(27,79,216,0.2), inset 0 0 20px rgba(27,79,216,0.05);
+}
+
+/* Feed items enhanced */
+.feed {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.feed:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+
+/* Mobile bottom nav blur */
+#mob-nav {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.9);
+}
+
+/* Scroll bars styled */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray200); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gray300); }
+
+/* Notification enhanced */
+.notif {
+  background: linear-gradient(135deg, #1E293B, #0F172A);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+/* Icon system - replaces emoji with styled spans */
+.icon-svg {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.2em; height: 1.2em; flex-shrink: 0;
+}
+
+
+
+/* ─────────────────────────────────────
+   NEXUS SPLASH
+───────────────────────────────────── */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:0;
+  background:#0d1f44;
+  overflow:hidden;
+}
+#splash.hide{
+  animation:splashOut .55s ease forwards;
+  pointer-events:none;
+}
+@keyframes splashOut{to{opacity:0;transform:scale(1.04);}}
+
+/* subtle moving dot-grid */
+#splash-bg{
+  position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:36px 36px;
+  animation:bgDrift 12s linear infinite;
+}
+@keyframes bgDrift{to{background-position:36px 36px;}}
+
+/* soft center glow — no box */
+#splash-glow{
+  position:absolute;
+  width:600px;height:600px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(27,79,216,.18) 0%,transparent 68%);
+  animation:glowBreath 4s ease-in-out infinite;
+}
+@keyframes glowBreath{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+
+/* content above bg */
+#splash-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+}
+
+/* logo image — no box at all */
+#splash-img{
+  width:72px;height:72px;
+  object-fit:contain;
+  filter:brightness(0) invert(1);
+  opacity:0;
+  animation:itemIn .7s cubic-bezier(.34,1.5,.64,1) .1s forwards;
+  margin-bottom:24px;
+}
+/* fallback icon if image fails */
+#splash-icon{
+  display:none;
+  width:72px;height:72px;
+  margin-bottom:24px;
+  opacity:0;
+  animation:itemIn .7s cubic-bezier(.34,1.5,.64,1) .1s forwards;
+}
+
+#splash-title{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:40px;font-weight:800;letter-spacing:-.03em;
+  color:#fff;
+  margin-bottom:4px;
+  opacity:0;
+  animation:itemIn .6s ease .25s forwards;
+}
+#splash-title em{color:#60A5FA;font-style:normal;}
+
+#splash-school{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:11px;font-weight:600;
+  color:rgba(255,255,255,.35);
+  letter-spacing:.18em;text-transform:uppercase;
+  margin-bottom:48px;
+  opacity:0;
+  animation:itemIn .6s ease .38s forwards;
+}
+
+#splash-bar-wrap{
+  width:180px;
+  opacity:0;
+  animation:itemIn .6s ease .5s forwards;
+}
+#splash-track{
+  height:2px;
+  background:rgba(255,255,255,.1);
+  border-radius:1px;
+  overflow:hidden;
+}
+#splash-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#3B82F6,#93C5FD);
+  border-radius:1px;
+  box-shadow:0 0 10px rgba(96,165,250,.8);
+  transition:width .3s ease;
+}
+#splash-lbl{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:10px;font-weight:500;
+  color:rgba(255,255,255,.25);
+  text-align:center;
+  margin-top:12px;
+  letter-spacing:.08em;
+}
+
+@keyframes itemIn{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+/* ───────────────────────────────────── */
+</style>
+
+</head>
+<body>
+
+
+
+
+
+<!-- ─── NEXUS SPLASH ─── -->
+<div id="splash">
+  <div id="splash-bg"></div>
+  <div id="splash-glow"></div>
+  <div id="splash-content">
+    <img id="splash-img"
+      src="https://alhekma.com/wp-content/uploads/logo-01.png"
+      alt="AHIS Nexus"
+      onerror="this.style.display='none';document.getElementById('splash-icon').style.display='block';">
+    <svg id="splash-icon" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="1.5">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+      <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+    </svg>
+    <div id="splash-title">AHIS <em>Nexus</em></div>
+    <div id="splash-school">Al-Hekma International School</div>
+    <div id="splash-bar-wrap">
+      <div id="splash-track"><div id="splash-fill"></div></div>
+      <div id="splash-lbl">Initialising...</div>
+    </div>
+  </div>
+</div>
+<!-- ─── END SPLASH ─── -->
+
+<div id="notif" class="notif"></div>
+
+<div id="app">
+<!-- SIDEBAR -->
+<div id="sb">
+  <div class="sb-logo" onclick="showView('s-home');setNavActive('ni-shome')" style="padding:12px 16px;gap:8px;">
+    <img src="https://alhekma.com/wp-content/uploads/logo-01.png" alt="AHIS" style="width:36px;height:36px;object-fit:contain;border-radius:8px;background:linear-gradient(135deg,#1B4FD8,#3B82F6);padding:4px;" onerror="this.style.display='none'">
+    <div><div class="sb-logo-txt">AHIS <span>Nexus</span></div><div class="sb-logo-sub">Smart Campus · AI Powered</div></div>
+  </div>
+  <div class="sb-user">
+    <div class="av av-s" id="sb-av">Y</div>
+    <div style="overflow:hidden;flex:1;"><div class="u-name" id="sb-name">Yousif Al-Taqi</div><div class="u-role" id="sb-role">Grade 12 IB · Student</div></div>
+    <div class="u-dot"></div>
+  </div>
+
+  <!-- STUDENT NAV -->
+  <div id="nav-s">
+    <div class="nav-sec">Student</div>
+    <div class="ni a" id="ni-shome" onclick="showView('s-home');setNavActive('ni-shome')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></span>Dashboard</div>
+    <div class="ni" id="ni-ssentinel" onclick="showView('s-sentinel');setNavActive('ni-ssentinel')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Sentinel AI</div>
+    <div class="ni" id="ni-ssubjects" onclick="showView('s-subjects');setNavActive('ni-ssubjects')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>My Subjects</div>
+    <div class="ni" id="ni-sgrades" onclick="showView('s-grades');setNavActive('ni-sgrades')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Gradebook</div>
+    <div class="ni" id="ni-sattend" onclick="showView('s-attendance');setNavActive('ni-sattend')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>Attendance</div>
+    <div class="ni" id="ni-squiz" onclick="showView('s-quiz');setNavActive('ni-squiz')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg></span>Practice Quiz</div>
+  </div>
+
+  <!-- TEACHER NAV -->
+  <div id="nav-t" style="display:none">
+    <div class="nav-sec">Teacher</div>
+    <div class="ni ag" id="ni-thome" onclick="showView('t-home');setNavActive('ni-thome')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></span>Overview</div>
+    <div class="ni" id="ni-tdrop" onclick="showView('t-drop');setNavActive('ni-tdrop')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg></span>Magic Drop</div>
+    <div class="ni" id="ni-tstudents" onclick="showView('t-students');setNavActive('ni-tstudents')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></span>My Students <span class="ni-badge">3</span></div>
+    <div class="ni" id="ni-tgrades" onclick="showView('t-gradebook');setNavActive('ni-tgrades')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Gradebook</div>
+    <div class="ni" id="ni-tattend" onclick="showView('t-attendance');setNavActive('ni-tattend')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></span>Attendance</div>
+    <div class="ni" id="ni-temail" onclick="showView('t-email');setNavActive('ni-temail')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>Email Engine</div>
+  </div>
+
+  <!-- PARENT NAV -->
+  <div id="nav-p" style="display:none">
+    <div class="nav-sec">Parent</div>
+    <div class="ni at" id="ni-phome" onclick="showView('p-home');setNavActive('ni-phome')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></span>My Child</div>
+    <div class="ni" id="ni-palerts" onclick="showView('p-alerts');setNavActive('ni-palerts')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></span>Alerts <span class="ni-badge">2</span></div>
+    <div class="ni" id="ni-pprogress" onclick="showView('p-progress');setNavActive('ni-pprogress')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg></span>Progress</div>
+    <div class="ni" id="ni-pmeeting" onclick="showView('p-meeting');setNavActive('ni-pmeeting')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></span>Book Meeting</div>
+    <div class="ni" id="ni-preports" onclick="showView('p-reports');setNavActive('ni-preports')"><span class="ni-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg></span>Reports</div>
+  </div>
+
+  <div class="sb-bot">
+    <div class="sb-bot-btn" onclick="showView('settings');setNavActive('')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Settings</div>
+    <div class="sb-bot-btn" onclick="showHelpModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Help & Support</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="tb">
+    <button id="mob-menu-btn" onclick="toggleSidebar()" style="background:var(--gray100);border:none;border-radius:8px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gray700)" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div><div class="tb-t" id="tb-title">Student Dashboard</div><div class="tb-s">Sunday, 26 April 2026 · Al-Hekma International School</div></div>
+    <div class="role-sw">
+      <button class="rbtn act" id="rbtn-s" onclick="switchRole('student',this)"><span class="rbtn-full">🎓 Student</span><span class="rbtn-short">🎓</span></button>
+      <button class="rbtn" id="rbtn-t" onclick="switchRole('teacher',this)"><span class="rbtn-full">⚡ Teacher</span><span class="rbtn-short">⚡</span></button>
+      <button class="rbtn" id="rbtn-p" onclick="switchRole('parent',this)"><span class="rbtn-full">💬 Parent</span><span class="rbtn-short">💬</span></button>
+    </div>
+    <div class="ai-pill" style="cursor:pointer;" onclick="toggleBot()">
+  <div class="ai-dot"></div>
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" style="margin-right:2px"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+  Nexus AI Online
+</div>
+  </div>
+
+  <div id="ct">
+
+<!-- ═══════════════════════════════ -->
+<!-- STUDENT HOME -->
+<!-- ═══════════════════════════════ -->
+<div class="view act" id="v-s-home">
+  <div class="ph"><h1>Good morning, Yousif 👋</h1><p>You have 4 classes today and 2 pending assignments. Your Biology average needs attention.</p></div>
+  <div class="aia aia-blue">
+    <div class="aia-ic ic-blue">🤖</div>
+    <div style="flex:1"><div class="aia-label lbl-blue">Nexus AI Insight</div><div class="aia-txt">Your <strong>Economics IA</strong> is due in 4 days — run it through Sentinel before submitting. <strong>Biology dropped 2%</strong> this week. Click any subject below to open your AI Study Chat.</div></div>
+    <button class="btn btn-bl btn-sm" onclick="showView('s-subjects');setNavActive('ni-ssubjects')">Open Subjects →</button>
+  </div>
+  <div class="g4">
+    <div class="sc" onclick="showView('s-grades');setNavActive('ni-sgrades')">
+      <div class="sc-top"><div class="sc-ic ic-bl">📊</div><div class="delta d-up">↑ +2.1%</div></div>
+      <div class="sc-val">84.2%</div><div class="sc-lbl">Overall Average</div>
+      <div class="sc-bar"><div class="bf bf-bl" style="width:84.2%"></div></div>
+    </div>
+    <div class="sc" onclick="showView('s-attendance');setNavActive('ni-sattend')">
+      <div class="sc-top"><div class="sc-ic ic-gr">✅</div><div class="delta d-up">On Track</div></div>
+      <div class="sc-val">96.7%</div><div class="sc-lbl">Attendance Rate</div>
+      <div class="sc-bar"><div class="bf bf-gr" style="width:96.7%"></div></div>
+    </div>
+    <div class="sc" onclick="showView('s-sentinel');setNavActive('ni-ssentinel')">
+      <div class="sc-top"><div class="sc-ic ic-te">🛡️</div><div class="delta d-nu">Last scan</div></div>
+      <div class="sc-val">71%</div><div class="sc-lbl">Sentinel Human Score</div>
+      <div class="sc-bar"><div class="bf bf-te" style="width:71%"></div></div>
+    </div>
+    <div class="sc" onclick="showView('s-quiz');setNavActive('ni-squiz')">
+      <div class="sc-top"><div class="sc-ic ic-go">✏️</div><div class="delta d-nu">Ready</div></div>
+      <div class="sc-val">3</div><div class="sc-lbl">Practice Quizzes Available</div>
+      <div class="sc-bar"><div class="bf bf-go" style="width:50%"></div></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><div><div class="ct">Today's Schedule</div><div class="cs">4 classes · Sunday 26 Apr</div></div></div>
+      <div class="sched-row" onclick="openRag('Economics HL','📊','Market Failure','Your Economics IA is due in 4 days. Market Failure is the key topic. Ask me anything!')"><div class="sched-stripe" style="background:#3B82F6"></div><div class="sched-time">08:00</div><div><div class="sched-name">Economics HL</div><div class="sched-room">Mr. Hassan · Room 204</div></div><div class="badge b-bl" style="margin-left:auto;">HL</div></div>
+      <div class="sched-row" onclick="openRag('Biology HL','🧬','Genetics','Biology test May 5 — Genetics chapter. Your average dropped this week. Let me help you revise!')"><div class="sched-stripe" style="background:#059669"></div><div class="sched-time">09:50</div><div><div class="sched-name">Biology HL</div><div class="sched-room">Ms. Al-Mansoori · Lab 3</div></div><div class="badge b-gr" style="margin-left:auto;">HL</div></div>
+      <div class="sched-row" onclick="openRag('Mathematics AA HL','📐','Calculus','89% — top of your class! Paper 2 is next. Focus on integration and differential equations.')"><div class="sched-stripe" style="background:#D97706"></div><div class="sched-time">11:40</div><div><div class="sched-name">Mathematics AA HL</div><div class="sched-room">Mr. Khalil · Room 108</div></div><div class="badge b-go" style="margin-left:auto;">HL</div></div>
+      <div class="sched-row" onclick="openRag('History HL','📜','Cold War','86% with great momentum! Source analysis is key for Paper 1. Let me give you model answers.')"><div class="sched-stripe" style="background:#7C3AED"></div><div class="sched-time">13:20</div><div><div class="sched-name">History HL</div><div class="sched-room">Ms. Ibrahim · Room 312</div></div><div class="badge b-pu" style="margin-left:auto;">HL</div></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div><div class="ct">Upcoming Deadlines</div><div class="cs">Click to open AI study help</div></div></div>
+      <div class="li" onclick="openRag('Economics IA','📄','Internal Assessment','Your IA on Housing Markets is due in 4 days. I recommend running it through Sentinel first. Want help outlining your argument?')"><div class="li-ic ic-re">📄</div><div><div class="li-name">Economics IA Draft</div><div class="li-sub">Run through Sentinel before submitting</div></div><div class="li-end"><div class="due due-re">4 days</div></div></div>
+      <div class="li" onclick="openRag('Biology HL','🧬','Genetics','Test on May 5. Mendelian genetics and inheritance patterns are highest priority. Want a 5-question quiz?')"><div class="li-ic ic-go">🧬</div><div><div class="li-name">Biology Test — Genetics</div><div class="li-sub">Chapter 10 · AI study guide ready</div></div><div class="li-end"><div class="due due-go">9 days</div></div></div>
+      <div class="li" onclick="openRag('Mathematics AA HL','📐','Calculus','Paper 2 practice: integration by parts and differential equations are most common. Want practice questions?')"><div class="li-ic ic-bl">📐</div><div><div class="li-name">Math AA Paper Practice</div><div class="li-sub">Topic 5 — Calculus</div></div><div class="li-end"><div class="due due-bl">12 days</div></div></div>
+      <div class="li" onclick="openRag('English A','📖','Paper 2','Comparative essay technique. Link both texts in every paragraph. Thesis quality is 25% of marks.')"><div class="li-ic ic-pu">📖</div><div><div class="li-name">English HL Essay</div><div class="li-sub">Comparative Paper 2 prep</div></div><div class="li-end"><div class="due due-gr">18 days</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SENTINEL -->
+<div class="view" id="v-s-sentinel">
+  <div class="ph"><h1>Sentinel AI 🛡️</h1><p>Paste your essay — Sentinel analyses your writing style and gives a Humanization Score before you submit.</p></div>
+  <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div class="card-hd"><div class="ct">Upload or Paste Draft</div></div>
+        <div class="scan-zone" id="scan-zone" onclick="startScan()">
+          <div class="scan-laser"></div>
+          <div style="font-size:40px;margin-bottom:12px;">📄</div>
+          <div style="font-size:14px;font-weight:700;color:var(--gray800);margin-bottom:4px;">Click to Scan Your Essay</div>
+          <div style="font-size:12px;color:var(--gray400);">Drag & drop or paste text below</div>
+          <div style="display:flex;justify-content:center;gap:6px;margin-top:10px;flex-wrap:wrap;">
+            <span class="badge b-nu">TXT</span><span class="badge b-nu">DOCX</span><span class="badge b-nu">PDF</span><span class="badge b-bl">Paste</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="ct">Quick Paste</div></div>
+        <textarea id="essay-ta" style="width:100%;border:1px solid var(--gray200);border-radius:8px;padding:12px;font-family:var(--font);font-size:13px;color:var(--gray800);resize:vertical;min-height:90px;outline:none;background:var(--gray50);line-height:1.6;transition:.2s;" placeholder="Paste your essay paragraph here — try something that sounds formal or AI-generated..." onfocus="this.style.borderColor='var(--blue)';this.style.background='#fff'" onblur="this.style.borderColor='var(--gray200)';this.style.background='var(--gray50)'">The economic implications of market failure are multifaceted and require comprehensive governmental intervention mechanisms to adequately address systemic inefficiencies in resource allocation within contemporary economic frameworks.</textarea>
+        <div id="scan-status" style="display:none;font-size:12px;font-weight:600;color:var(--blue);margin:10px 0;text-align:center;"></div>
+        <button class="btn btn-bl" style="width:100%;margin-top:10px;" onclick="startScan()">🛡️ Analyse with Sentinel</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div><div class="ct">Humanization Report</div><div class="cs">Your writing authenticity breakdown</div></div><div id="overall-score" style="font-size:28px;font-weight:800;color:var(--gray300);">–</div></div>
+      <div id="scan-wait" style="text-align:center;padding:36px 20px;color:var(--gray400);">
+        <div style="font-size:48px;margin-bottom:12px;">🛡️</div>
+        <div style="font-size:14px;font-weight:600;color:var(--gray600);margin-bottom:4px;">Ready to Analyse</div>
+        <div style="font-size:12px;">Submit your draft to see your Humanization Score</div>
+      </div>
+      <div id="scan-results" style="display:none;">
+        <div class="sbr-row"><div class="sbr-lbl">Overall Human Score</div><div class="sbr-track"><div class="sbr-fill bf-go" id="sb1" style="width:0%"></div></div><div class="sbr-val" id="sv1" style="color:var(--gold)">71%</div></div>
+        <div class="sbr-row"><div class="sbr-lbl">Stylometric Match</div><div class="sbr-track"><div class="sbr-fill bf-gr" id="sb2" style="width:0%"></div></div><div class="sbr-val" id="sv2" style="color:var(--green)">88%</div></div>
+        <div class="sbr-row"><div class="sbr-lbl">Lexical Diversity</div><div class="sbr-track"><div class="sbr-fill bf-bl" id="sb3" style="width:0%"></div></div><div class="sbr-val" id="sv3" style="color:var(--blue)">65%</div></div>
+        <div class="sbr-row"><div class="sbr-lbl">Syntactic Burstiness</div><div class="sbr-track"><div class="sbr-fill bf-re" id="sb4" style="width:0%"></div></div><div class="sbr-val" id="sv4" style="color:var(--red)">42%</div></div>
+        <div class="sbr-row"><div class="sbr-lbl">Sentence Variance</div><div class="sbr-track"><div class="sbr-fill bf-te" id="sb5" style="width:0%"></div></div><div class="sbr-val" id="sv5" style="color:var(--teal)">58%</div></div>
+        <div class="flag" id="flag-card" style="display:none;">
+          <div class="flag-hd">⚠️ AI-Probability Flag Detected</div>
+          <div class="flag-q" id="flag-para"></div>
+          <div class="flag-p" id="flag-socratic"></div>
+          <div style="font-size:11px;color:var(--red);margin-top:6px;font-style:italic;" id="flag-verdict"></div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button class="btn btn-bl btn-sm" onclick="rewriteWithAI()">✏️ Rewrite with AI</button>
+            <button class="btn btn-gh btn-sm" onclick="notify('Paragraph accepted as-is')">Accept As-Is</button>
+          </div>
+        </div>
+        <div id="rewrite-result" style="display:none;margin-top:14px;background:var(--green-l);border:1px solid #A7F3D0;border-radius:10px;padding:14px;font-size:13px;color:var(--gray700);line-height:1.6;white-space:pre-wrap;"></div>
+        <div style="margin-top:14px;display:flex;gap:8px;">
+          <button class="btn btn-bl btn-sm" onclick="notify('✓ Submitted to Mr. Hassan with Sentinel report attached')">📤 Submit to Teacher</button>
+          <button class="btn btn-wh btn-sm" onclick="startScan()">🔄 Re-Scan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUBJECTS -->
+<div class="view" id="v-s-subjects">
+  <div class="ph"><h1>My Subjects 📚</h1><p>Click any subject to open your AI Study Chat — ask about the syllabus, past papers, or revision tips.</p></div>
+  <div class="g3 subj-grid">
+    <div class="subj" onclick="openRag('Economics HL','📊','Market Failure · IA in 4 days','Your Economics HL is at 82% — well done! Your IA on Housing Markets is due in 4 days. I recommend: (1) run your draft through Sentinel, (2) ensure you define market failure clearly, (3) include a Bahrain-specific example of a negative externality like traffic congestion. Want me to quiz you on externalities or help outline your argument?')">
+      <div class="subj-stripe" style="background:linear-gradient(90deg,#3B82F6,#1B4FD8)"></div>
+      <span class="subj-em">📊</span>
+      <div class="subj-name">Economics HL</div>
+      <div class="subj-unit">Market Failure · IA Due Soon</div>
+      <div class="subj-row"><div class="subj-grade" style="color:var(--gold)">82%</div><div class="delta d-up">↑ +3%</div></div>
+      <div class="subj-bar"><div class="bf bf-go" style="width:82%"></div></div>
+      <div class="subj-hint">💬 Click to open AI Study Chat →</div>
+    </div>
+    <div class="subj" onclick="openRag('Biology HL','🧬','Genetics & Evolution · Test May 5','Biology dropped to 74% after the Cell Respiration test (68%, Apr 22). Your next test is May 5 on Genetics. Key focus: Mendelian genetics, inheritance patterns, and natural selection. Your teacher Ms. Al-Mansoori commented that your written evaluation needs improvement. Want a 5-question quiz on Mendel\'s laws right now?')">
+      <div class="subj-stripe" style="background:linear-gradient(90deg,#34D399,#059669)"></div>
+      <span class="subj-em">🧬</span>
+      <div class="subj-name">Biology HL</div>
+      <div class="subj-unit">Genetics & Evolution · Test in 9 days</div>
+      <div class="subj-row"><div class="subj-grade" style="color:var(--red)">74%</div><div class="delta d-dn">↓ −2%</div></div>
+      <div class="subj-bar"><div class="bf bf-re" style="width:74%"></div></div>
+      <div class="subj-hint">💬 Click to open AI Study Chat →</div>
+    </div>
+    <div class="subj" onclick="openRag('Mathematics AA HL','📐','Calculus · Paper 2 Prep','Outstanding — 89% and top of your class! Mr. Khalil highlighted your integration work. For Paper 2: focus on Topic 5 (integration by substitution, integration by parts, differential equations, and Maclaurin series). I can generate 5 timed practice questions — just say \'quiz me\' to start.')">
+      <div class="subj-stripe" style="background:linear-gradient(90deg,#FBBF24,#D97706)"></div>
+      <span class="subj-em">📐</span>
+      <div class="subj-name">Mathematics AA HL</div>
+      <div class="subj-unit">Calculus · Paper 2 Practice</div>
+      <div class="subj-row"><div class="subj-grade" style="color:var(--blue)">89%</div><div class="delta d-up">↑ +1%</div></div>
+      <div class="subj-bar"><div class="bf bf-bl" style="width:89%"></div></div>
+      <div class="subj-hint">💬 Click to open AI Study Chat →</div>
+    </div>
+    <div class="subj" onclick="openRag('History HL','📜','Cold War · Source Analysis','History is at 86% — great momentum! For the Cold War Paper 1, source analysis is critical: evaluate each source\'s origin, purpose, value and limitation. I have model answers for the 2019–2023 past papers ready. Which year would you like to review?')">
+      <div class="subj-stripe" style="background:linear-gradient(90deg,#A78BFA,#7C3AED)"></div>
+      <span class="subj-em">📜</span>
+      <div class="subj-name">History HL</div>
+      <div class="subj-unit">Cold War · Paper 1 Source Analysis</div>
+      <div class="subj-row"><div class="subj-grade" style="color:var(--purple)">86%</div><div class="delta d-up">↑ +4%</div></div>
+      <div class="subj-bar"><div class="bf" style="width:86%;height:100%;border-radius:4px;animation:grow 1.3s ease-out;background:linear-gradient(90deg,#A78BFA,#7C3AED)"></div></div>
+      <div class="subj-hint">💬 Click to open AI Study Chat →</div>
+    </div>
+    <div class="subj" onclick="openRag('English A: L&L HL','📖','Paper 2 Comparative Essay','English at 91% — excellent! For Paper 2 comparative essays: always link both texts in every body paragraph. Your thesis quality is 25% of your mark — make it specific and evaluative. Want me to review a thesis statement you\'ve written?')">
+      <div class="subj-stripe" style="background:linear-gradient(90deg,#F9A8D4,#BE185D)"></div>
+      <span class="subj-em">📖</span>
+      <div class="subj-name">English A: L&L HL</div>
+      <div class="subj-unit">Paper 2 · Comparative Essay</div>
+      <div class="subj-row"><div class="subj-grade" style="color:#BE185D">91%</div><div class="delta d-up">↑ +2%</div></div>
+      <div class="subj-bar"><div class="bf" style="width:91%;height:100%;border-radius:4px;animation:grow 1.3s ease-out;background:linear-gradient(90deg,#F9A8D4,#BE185D)"></div></div>
+      <div class="subj-hint">💬 Click to open AI Study Chat →</div>
+    </div>
+    <div class="subj" onclick="openRag('Theory of Knowledge','🧠','Exhibition · Knowledge Claims','Your TOK exhibition objects are approved! Focus on explicitly linking each object to your central knowledge question. The commentary must show how the object demonstrates a real-world application of the knowledge claim. Want help drafting a paragraph for Object 1?')">
+      <div class="subj-stripe" style="background:linear-gradient(90deg,#22D3EE,#0891B2)"></div>
+      <span class="subj-em">🧠</span>
+      <div class="subj-name">Theory of Knowledge</div>
+      <div class="subj-unit">Exhibition Ready · A Grade</div>
+      <div class="subj-row"><div class="subj-grade" style="color:var(--teal)">A</div><div class="delta d-up">Strong</div></div>
+      <div class="subj-bar"><div class="bf bf-te" style="width:90%"></div></div>
+      <div class="subj-hint">💬 Click to open AI Study Chat →</div>
+    </div>
+  </div>
+</div>
+
+<!-- GRADEBOOK -->
+<div class="view" id="v-s-grades">
+  <div class="ph"><h1>My Gradebook 📊</h1><p>Full assessment history for Grade 12 IB — Term 3, 2026</p></div>
+  <div class="g4" style="margin-bottom:20px;">
+    <div class="sc" onclick="openRag('Term Average','📊','Overall Performance','Your term average is 84.2% — well done! That puts you in the top 30% of the class. Economics IA in 4 days is the key focus. Want me to break down which subjects are pulling your average up or down?')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-bl">🏆</div><div class="delta d-up">This term</div></div><div class="sc-val">84.2%</div><div class="sc-lbl">Term Average</div><div class="sc-bar"><div class="bf bf-bl" style="width:84.2%"></div></div></div>
+    <div class="sc" onclick="openRag('English A: L&L HL','📖','Paper 2 · Comparative Essay','English at 91% — your best subject! For Paper 2: link both texts in every body paragraph. Your thesis quality is 25% of marks. Want me to review a thesis you've written or give you a model answer?')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-gr">⭐</div><div class="delta d-up">Best subject</div></div><div class="sc-val">91%</div><div class="sc-lbl">English A: L&L</div><div class="sc-bar"><div class="bf bf-gr" style="width:91%"></div></div></div>
+    <div class="sc" onclick="openRag('Biology HL','🧬','Genetics & Evolution · Needs Focus','Biology dropped to 74% after the Cell Respiration test. This is your most urgent focus. Genetics test is May 5 — 9 days away. Want me to quiz you on Mendel's laws or create a revision plan?')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-re">⚠️</div><div class="delta d-dn">Needs focus</div></div><div class="sc-val">74%</div><div class="sc-lbl">Biology HL</div><div class="sc-bar"><div class="bf bf-re" style="width:74%"></div></div></div>
+    <div class="sc" onclick="openRag('IB Prediction','🎯','Predicted IB Score','Your predicted IB score is 38/45 — that's a strong result! To reach 40+, focus on bringing Biology up to 80%+ and ensuring a strong Economics IA. Want me to show you exactly what's needed in each subject?')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-go">📈</div><div class="delta d-up">↑ improving</div></div><div class="sc-val">6</div><div class="sc-lbl">Predicted IB Points</div><div class="sc-bar"><div class="bf bf-go" style="width:86%"></div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><div class="ct">Assessment History</div><button class="btn btn-wh btn-sm" onclick="notify('Downloading grade report PDF...')">📥 Download PDF</button></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Subject</th><th>Assessment</th><th>Date</th><th>Score</th><th>Grade</th><th>Teacher Comment</th></tr></thead>
+        <tbody>
+          <tr onclick="openRag('Economics HL','📊','Your IA','Your IA on Housing Markets is in good shape. Focus on strengthening your evaluation paragraphs with more real-world evidence.')"><td>Economics HL</td><td>Unit Test 3</td><td>Apr 18</td><td>76/100</td><td><span class="badge b-bl">B</span></td><td style="font-size:11px;color:var(--gray500)">Strong analysis, improve evaluation</td></tr>
+          <tr onclick="openRag('Biology HL','🧬','Cell Respiration','Your score of 68% on Cell Respiration shows conceptual understanding but your written analysis needs more scientific vocabulary and data interpretation.')"><td>Biology HL</td><td>Test 2 – Cell Respiration</td><td>Apr 22</td><td>68/100</td><td><span class="badge b-re">C</span></td><td style="font-size:11px;color:var(--gray500)">Written evaluation needs work</td></tr>
+          <tr onclick="openRag('Mathematics AA HL','📐','Paper 1 Mock','Excellent Paper 1 performance. For Paper 2, focus more on showing full working for integration questions.')"><td>Mathematics AA HL</td><td>Paper 1 Mock</td><td>Apr 15</td><td>89/100</td><td><span class="badge b-gr">A</span></td><td style="font-size:11px;color:var(--gray500)">Exceptional — top of class</td></tr>
+          <tr onclick="openRag('History HL','📜','Essay','Your Cold War essay showed excellent source analysis. The argument structure needs to be more clearly signposted.')"><td>History HL</td><td>Cold War Essay</td><td>Apr 10</td><td>84/100</td><td><span class="badge b-bl">B+</span></td><td style="font-size:11px;color:var(--gray500)">Excellent source analysis</td></tr>
+          <tr onclick="openRag('English A','📖','Paper 1','Very strong Paper 1. Your textual analysis is perceptive. Ensure you comment on how literary techniques create meaning, not just identify them.')"><td>English A: L&L</td><td>Paper 1 Practice</td><td>Apr 8</td><td>91/100</td><td><span class="badge b-gr">A</span></td><td style="font-size:11px;color:var(--gray500)">Outstanding analysis</td></tr>
+          <tr onclick="openRag('TOK','🧠','Exhibition','Your object selections are strong. Ensure your commentary explicitly connects each object to the central knowledge question.')"><td>TOK</td><td>Exhibition Draft</td><td>Apr 5</td><td>A</td><td><span class="badge b-gr">A</span></td><td style="font-size:11px;color:var(--gray500)">Objects well-chosen, commentary developing</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ATTENDANCE -->
+<div class="view" id="v-s-attendance">
+  <div class="ph"><h1>Attendance Record 📅</h1><p>Term 3, 2026 — Click any day to see details</p></div>
+  <div class="g4">
+    <div class="sc" onclick="notify('✅ 96.7% attendance — excellent! Well above the 90% IB minimum.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-gr">✅</div><div class="delta d-up">Excellent</div></div><div class="sc-val">96.7%</div><div class="sc-lbl">Attendance Rate</div><div class="sc-bar"><div class="bf bf-gr" style="width:96.7%"></div></div></div>
+    <div class="sc" onclick="notify('❌ 2 absences this term — both with medical certificates on file.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-re">❌</div><div class="delta d-nu">Term 3</div></div><div class="sc-val">2</div><div class="sc-lbl">Days Absent</div><div class="sc-bar"><div class="bf bf-re" style="width:3.3%"></div></div></div>
+    <div class="sc" onclick="notify('⏰ 1 late arrival — April 23, 15 minutes (traffic). Not flagged.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-go">⏰</div><div class="delta d-nu">Term 3</div></div><div class="sc-val">1</div><div class="sc-lbl">Late Arrivals</div><div class="sc-bar"><div class="bf bf-go" style="width:1.7%"></div></div></div>
+    <div class="sc" onclick="notify('📆 58/60 days present — on track for full attendance recognition.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-bl">📆</div><div class="delta d-up">On track</div></div><div class="sc-val">58/60</div><div class="sc-lbl">Days Present</div><div class="sc-bar"><div class="bf bf-bl" style="width:96.7%"></div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><div class="ct">April 2026 Attendance</div><div style="display:flex;gap:8px;align-items:center;font-size:11px;flex-wrap:wrap;gap:10px;"><span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--green-l);display:inline-block;"></span>Present</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--red-l);display:inline-block;"></span>Absent</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--gold-l);display:inline-block;"></span>Late</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:var(--gray100);display:inline-block;"></span>Holiday</span></div></div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px;text-align:center;">
+      <div style="font-size:10px;font-weight:700;color:var(--gray400);padding:4px;">Sun</div><div style="font-size:10px;font-weight:700;color:var(--gray400);padding:4px;">Mon</div><div style="font-size:10px;font-weight:700;color:var(--gray400);padding:4px;">Tue</div><div style="font-size:10px;font-weight:700;color:var(--gray400);padding:4px;">Wed</div><div style="font-size:10px;font-weight:700;color:var(--gray400);padding:4px;">Thu</div><div style="font-size:10px;font-weight:700;color:var(--gray400);padding:4px;">Fri</div><div style="font-size:10px;font-weight:700;color:var(--gray400);padding:4px;">Sat</div>
+    </div>
+    <div id="att-grid" class="att-grid"></div>
+    <div id="att-detail" style="margin-top:10px;padding:12px;background:var(--gray50);border-radius:8px;font-size:13px;color:var(--gray700);display:none;"></div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="view" id="v-s-quiz">
+  <div class="ph"><h1>Practice Quiz ✏️</h1><p>AI-generated questions based on your current syllabus. Click a subject to start.</p></div>
+  <div id="quiz-select">
+    <div class="g3">
+      <div class="subj" onclick="startQuiz('econ')"><span class="subj-em">📊</span><div class="subj-name">Economics HL Quiz</div><div class="subj-unit">Market Failure · 5 Questions</div><div style="margin-top:8px;"><span class="badge b-go">Recommended</span></div></div>
+      <div class="subj" onclick="startQuiz('bio')"><span class="subj-em">🧬</span><div class="subj-name">Biology HL Quiz</div><div class="subj-unit">Genetics · 5 Questions</div><div style="margin-top:8px;"><span class="badge b-re">Needs focus</span></div></div>
+      <div class="subj" onclick="startQuiz('math')"><span class="subj-em">📐</span><div class="subj-name">Mathematics AA Quiz</div><div class="subj-unit">Calculus · 5 Questions</div><div style="margin-top:8px;"><span class="badge b-bl">Top scorer</span></div></div>
+    </div>
+  </div>
+  <div id="quiz-area" style="display:none;"></div>
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!-- TEACHER HOME -->
+<!-- ═══════════════════════════════ -->
+<div class="view" id="v-t-home">
+  <div class="ph"><h1>Good morning, Mr. Hassan ⚡</h1><p>3 classes today · Grade 12 Economics · 28 students</p></div>
+  <div class="aia aia-gold">
+    <div class="aia-ic ic-gold">🤖</div>
+    <div style="flex:1"><div class="aia-label lbl-gold">Nexus AI Insight</div><div class="aia-txt"><strong>3 students</strong> showed grade drops over 5% this week — parent emails are pre-drafted. Today's <strong>Market Failure lesson plan</strong> is ready with 3 pathway options.</div></div>
+    <button class="btn btn-go btn-sm" onclick="showView('t-email');setNavActive('ni-temail')">Review Emails →</button>
+  </div>
+  <div class="g4">
+    <div class="sc" onclick="showView('t-students');setNavActive('ni-tstudents')"><div class="sc-top"><div class="sc-ic ic-bl">👥</div><div class="delta d-nu">Gr.12 Econ</div></div><div class="sc-val">28</div><div class="sc-lbl">Total Students</div><div class="sc-bar"><div class="bf bf-bl" style="width:100%"></div></div></div>
+    <div class="sc" onclick="showView('t-gradebook');setNavActive('ni-tgrades')"><div class="sc-top"><div class="sc-ic ic-gr">📈</div><div class="delta d-up">↑ +1.8%</div></div><div class="sc-val">76.4%</div><div class="sc-lbl">Class Average</div><div class="sc-bar"><div class="bf bf-gr" style="width:76.4%"></div></div></div>
+    <div class="sc" onclick="showView('t-students');setNavActive('ni-tstudents')"><div class="sc-top"><div class="sc-ic ic-re">⚠️</div><div class="delta d-dn">Action needed</div></div><div class="sc-val">3</div><div class="sc-lbl">At-Risk Students</div><div class="sc-bar"><div class="bf bf-re" style="width:10.7%"></div></div></div>
+    <div class="sc" onclick="showView('t-gradebook');setNavActive('ni-tgrades')"><div class="sc-top"><div class="sc-ic ic-go">📝</div><div class="delta d-nu">Pending</div></div><div class="sc-val">12</div><div class="sc-lbl">Ungraded Submissions</div><div class="sc-bar"><div class="bf bf-go" style="width:42.8%"></div></div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><div><div class="ct">Today's Lesson — Market Failure</div><div class="cs">Pathway B active · 50 minutes</div></div><button class="btn btn-go btn-sm" onclick="showView('t-drop');setNavActive('ni-tdrop')">✨ New Plan</button></div>
+      <div class="ag-row"><div class="ag-t">00–05</div><div class="ag-b ag-blue">Starter: Kahoot — "Name a negative externality you saw today"</div></div>
+      <div class="ag-row"><div class="ag-t">05–15</div><div class="ag-b ag-gold">Direct instruction: 4 types of market failure + Bahrain context slides</div></div>
+      <div class="ag-row"><div class="ag-t">15–30</div><div class="ag-b">Group case study: Bahrain traffic congestion as negative externality</div></div>
+      <div class="ag-row"><div class="ag-t">30–42</div><div class="ag-b ag-teal">Pair share + Evaluate discussion using IB command terms</div></div>
+      <div class="ag-row"><div class="ag-t">42–50</div><div class="ag-b ag-green">Exit quiz — AI flags struggling students live via Nexus</div></div>
+      <div style="margin-top:12px;display:flex;gap:8px;">
+        <button class="btn btn-wh btn-sm" onclick="notify('📥 Downloading lesson plan PDF...')">📥 Download PDF</button>
+        <button class="btn btn-wh btn-sm" onclick="notify('📤 Shared with students on Nexus')">📤 Share with Class</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div><div class="ct">Pending Parent Emails</div><div class="cs">AI-drafted · Ready for review</div></div><span class="badge b-re">3 pending</span></div>
+      <div class="li" onclick="openEmailDrawer('Hamad K.')"><div class="li-ic ic-re" style="font-size:16px;">👤</div><div><div class="li-name">Parent of Hamad K.</div><div class="li-sub">Grade drop −8.2% · Test score 52%</div></div><div class="li-end"><button class="btn btn-re btn-xs" onclick="event.stopPropagation();openEmailDrawer('Hamad K.')">Review Draft →</button></div></div>
+      <div class="li" onclick="openEmailDrawer('Sara M.')"><div class="li-ic ic-re" style="font-size:16px;">👤</div><div><div class="li-name">Parent of Sara M.</div><div class="li-sub">3 missed assignments · Attendance 88%</div></div><div class="li-end"><button class="btn btn-re btn-xs" onclick="event.stopPropagation();openEmailDrawer('Sara M.')">Review Draft →</button></div></div>
+      <div class="li" onclick="openEmailDrawer('Yousif A.')"><div class="li-ic ic-gr" style="font-size:16px;">👤</div><div><div class="li-name">Parent of Yousif A.</div><div class="li-sub">Excellent progress · Commendation note</div></div><div class="li-end"><button class="btn btn-gr btn-xs" onclick="event.stopPropagation();openEmailDrawer('Yousif A.')">Review Draft →</button></div></div>
+      <button class="btn btn-go" style="width:100%;margin-top:10px;" onclick="showView('t-email');setNavActive('ni-temail')">📬 Open Email Engine</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAGIC DROP -->
+<div class="view" id="v-t-drop">
+  <div class="ph"><h1>Magic Drop Zone ✨</h1><p>Drop any lesson file — Nexus generates 3 personalised class pathways and a full 50-minute agenda instantly.</p></div>
+  <div class="g2" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-hd"><div class="ct">Upload Lesson Material</div></div>
+      <div class="md-zone" id="md-zone" onclick="startIngestion()">
+        <canvas class="pcanvas" id="pcanvas"></canvas>
+        <div style="position:relative;z-index:1;">
+          <div style="font-size:44px;margin-bottom:12px;" id="md-icon">📂</div>
+          <div style="font-size:15px;font-weight:700;color:var(--gray800);margin-bottom:4px;" id="md-title">Drop Your Lesson File</div>
+          <div style="font-size:12px;color:var(--gray500);" id="md-sub">PPT, PDF, DOCX, URL — or click to browse</div>
+          <div style="display:flex;justify-content:center;gap:6px;margin-top:10px;flex-wrap:wrap;" id="md-chips">
+            <span class="badge b-go">PPT</span><span class="badge b-go">PDF</span><span class="badge b-go">DOCX</span><span class="badge b-te">URL</span>
+          </div>
+        </div>
+        <div class="md-prog" id="md-prog"><div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div><div class="prog-lbl" id="prog-lbl">Extracting slides...</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="ct">Recently Ingested</div></div>
+      <div class="li" onclick="showView('t-drop');loadExistingPathways('econ')"><div class="li-ic ic-bl" style="font-size:16px;">📊</div><div><div class="li-name">Market_Failure_Gr12.pptx</div><div class="li-sub">24 slides · 3 pathways ready</div></div><div class="li-end"><span class="badge b-gr">✓ Done</span></div></div>
+      <div class="li" onclick="showView('t-drop');loadExistingPathways('supply')"><div class="li-ic ic-re" style="font-size:16px;">📄</div><div><div class="li-name">Demand_Supply_Notes.pdf</div><div class="li-sub">18 pages · RAG indexed</div></div><div class="li-end"><span class="badge b-gr">✓ Done</span></div></div>
+      <div class="li" onclick="showView('t-drop');loadExistingPathways('syllabus')"><div class="li-ic ic-gr" style="font-size:16px;">📝</div><div><div class="li-name">IB_Econ_Syllabus_2024.docx</div><div class="li-sub">Full guide · Embedded in Weaviate</div></div><div class="li-end"><span class="badge b-gr">✓ Done</span></div></div>
+    </div>
+  </div>
+  <div id="pathway-area" style="display:none;animation:fu .4s both;"></div>
+</div>
+
+<!-- TEACHER STUDENTS -->
+<div class="view" id="v-t-students">
+  <div class="ph"><h1>My Students 👥</h1><p>Grade 12 Economics · 28 students · Click any student for their AI profile or draft a parent email</p></div>
+  <div class="aia aia-red">
+    <div class="aia-ic ic-red">⚠️</div>
+    <div style="flex:1"><div class="aia-label lbl-red">At-Risk Alert</div><div class="aia-txt">Nexus AI has flagged <strong>3 students</strong> with grade drops exceeding 5% this week. Parent emails have been pre-drafted and are ready for your review.</div></div>
+    <button class="btn btn-re btn-sm" onclick="showView('t-email');setNavActive('ni-temail')">Review Emails →</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div class="grade-header"><input class="grade-search" id="student-search" placeholder="🔍 Search students..." onkeyup="filterStudents()"><button class="btn btn-go btn-sm" onclick="openEmailDrawer('All Students')">📬 Email All At-Risk</button></div>
+    <div class="mob-scroll-hint" style="display:none;padding:8px 14px;font-size:11px;color:var(--blue);background:var(--blue-l);border-top:1px solid #C7D7FF;">← Swipe table to see all columns →</div>
+<div class="tbl-wrap" style="border-radius:0;border:none;border-top:1px solid var(--gray200);">
+      <table class="tbl" id="student-table">
+        <thead><tr><th>Student</th><th>Average</th><th>7-Day Trend</th><th>Attendance</th><th>Last Submission</th><th>Status</th><th>AI Profile</th><th>Email Parent</th></tr></thead>
+        <tbody id="student-tbody">
+          <tr><td onclick="openRag('Yousif Al-Taqi','👤','Student Profile','Yousif is performing excellently — 82% average with consistent improvement. His calculus work in Mathematics is exceptional. For Economics, encourage him to run his IA through Sentinel. No concerns at this time.')">Yousif Al-Taqi</td><td><strong style="color:var(--gold)">82%</strong></td><td style="color:var(--green);font-weight:600">↑ +3.2%</td><td>96.7%</td><td>IA Draft (Sentinel pending)</td><td><span class="badge b-gr">On Track</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('Yousif Al-Taqi','👤','Student Profile','Yousif is performing excellently — 82% average with consistent improvement. His IA draft is pending Sentinel review. Predicted grade: 6/7.')">View Profile</button></td><td><button class="btn btn-bl btn-xs" onclick="openEmailDrawer('Yousif A.')">Draft Email</button></td></tr>
+          <tr><td onclick="openRag('Hamad Al-Kuwari','👤','At-Risk Profile','Hamad needs immediate support. His average dropped 8.2% this week after scoring 52% on Test 2. Root cause: difficulty with demand-supply diagrams and written evaluation. Recommended: additional tutoring sessions and structured revision plan.')">Hamad Al-Kuwari</td><td><strong style="color:var(--red)">54%</strong></td><td style="color:var(--red);font-weight:600">↓ −8.2%</td><td>88%</td><td>Test 2 (52%)</td><td><span class="badge b-re">At Risk</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('Hamad Al-Kuwari','👤','At-Risk Profile','Hamad needs immediate support. His average dropped 8.2% after Test 2 (52%). Root cause: difficulty with demand-supply diagrams. Recommended: structured revision plan and parent meeting.')">View Profile</button></td><td><button class="btn btn-re btn-xs" onclick="openEmailDrawer('Hamad K.')">Draft Email</button></td></tr>
+          <tr><td onclick="openRag('Sara Al-Mahmoud','👤','At-Risk Profile','Sara has missed 3 assignments this week and her attendance dropped to 88%. While her in-class participation is strong, missing work is pulling her grade down. Recommended: a check-in conversation and parent communication.')">Sara Al-Mahmoud</td><td><strong style="color:var(--red)">61%</strong></td><td style="color:var(--red);font-weight:600">↓ −5.9%</td><td>88%</td><td>3 missed assignments</td><td><span class="badge b-re">At Risk</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('Sara Al-Mahmoud','👤','At-Risk Profile','Sara missed 3 assignments and attendance dropped to 88%. Strong class participation but missing work is pulling grades down. Recommend parent meeting and assignment catch-up plan.')">View Profile</button></td><td><button class="btn btn-re btn-xs" onclick="openEmailDrawer('Sara M.')">Draft Email</button></td></tr>
+          <tr><td>Fatima Al-Rashed</td><td><strong style="color:var(--green)">91%</strong></td><td style="color:var(--green);font-weight:600">↑ +1.5%</td><td>100%</td><td>Paper 1 Mock (88%)</td><td><span class="badge b-gr">Excellent</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('Fatima Al-Rashed','👤','Excellence Profile','Fatima is the top student in the class at 91% with 100% attendance. Her Paper 1 mock was outstanding. Recommend nominating her for the Economics Excellence Award.')">View Profile</button></td><td><button class="btn btn-bl btn-xs" onclick="openEmailDrawer('Fatima R.')">Draft Email</button></td></tr>
+          <tr><td>Omar Al-Dosari</td><td><strong style="color:var(--blue)">77%</strong></td><td style="color:var(--green);font-weight:600">↑ +0.8%</td><td>94%</td><td>Case study (B+)</td><td><span class="badge b-bl">Stable</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('Omar Al-Dosari','👤','Student Profile','Omar is making steady progress at 77% with a small positive trend. His applied thinking in case studies is strong. Encourage more past paper practice to improve exam technique.')">View Profile</button></td><td><button class="btn btn-bl btn-xs" onclick="openEmailDrawer('Omar D.')">Draft Email</button></td></tr>
+          <tr><td>Noor Al-Khalifa</td><td><strong style="color:var(--blue)">79%</strong></td><td style="color:var(--green);font-weight:600">↑ +2.1%</td><td>97%</td><td>Quiz 5 (76%)</td><td><span class="badge b-bl">Stable</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('Noor Al-Khalifa','👤','Student Profile','Noor is consistently improving at 79% with strong quiz performance. Her 97% attendance is exemplary. A few more structured essay attempts would push her toward the A band.')">View Profile</button></td><td><button class="btn btn-bl btn-xs" onclick="openEmailDrawer('Noor K.')">Draft Email</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TEACHER GRADEBOOK -->
+<div class="view" id="v-t-gradebook">
+  <div class="ph"><h1>Class Gradebook 📊</h1><p>Grade 12 Economics · All assessments · Click any cell to add/edit grades</p></div>
+  <div class="g4">
+    <div class="sc" onclick="notify('📈 Class average: 76.4% — up 1.8% from last week. 19/28 students above 70%.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-gr">📈</div><div class="delta d-up">↑ +1.8%</div></div><div class="sc-val">76.4%</div><div class="sc-lbl">Class Average</div><div class="sc-bar"><div class="bf bf-gr" style="width:76.4%"></div></div></div>
+    <div class="sc" onclick="openRag('Fatima Al-Rashed','👤','Excellence Profile','Fatima is the top student in the class at 91% with 100% attendance. Her Paper 1 mock was outstanding. Recommend nominating her for the Economics Excellence Award this term.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-bl">🏆</div><div class="delta d-up">Top scorer</div></div><div class="sc-val">91%</div><div class="sc-lbl">Highest Grade (Fatima)</div><div class="sc-bar"><div class="bf bf-bl" style="width:91%"></div></div></div>
+    <div class="sc" onclick="openEmailDrawer('Hamad K.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-re">📉</div><div class="delta d-dn">Support needed</div></div><div class="sc-val">54%</div><div class="sc-lbl">Lowest Grade (Hamad)</div><div class="sc-bar"><div class="bf bf-re" style="width:54%"></div></div></div>
+    <div class="sc" onclick="notify('📝 12 ungraded items: 6 case studies, 4 quiz responses, 2 IA drafts. Click each student row to grade.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-go">📝</div><div class="delta d-nu">Pending</div></div><div class="sc-val">12</div><div class="sc-lbl">Ungraded Items</div><div class="sc-bar"><div class="bf bf-go" style="width:42.8%"></div></div></div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div class="card-hd" style="padding:16px 20px;"><div class="ct">Grade Entry Table</div><div style="display:flex;gap:8px;"><button class="btn btn-go btn-sm" onclick="notify('📊 Generating AI class performance report...')">🤖 AI Report</button><button class="btn btn-wh btn-sm" onclick="notify('📥 Downloading gradebook CSV...')">📥 Export</button></div></div>
+    <div class="mob-scroll-hint" style="display:none;padding:8px 14px;font-size:11px;color:var(--blue);background:var(--blue-l);">← Swipe to see all columns →</div>
+<div class="tbl-wrap" style="border-radius:0;border:none;border-top:1px solid var(--gray200);">
+      <table class="tbl">
+        <thead><tr><th>Student</th><th>Test 1</th><th>Test 2</th><th>Test 3</th><th>Case Study</th><th>Quiz Avg</th><th>IA Draft</th><th>Current Avg</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr><td>Yousif Al-Taqi</td><td onclick="editGrade(this,'78')"><span class="badge b-bl">78%</span></td><td onclick="editGrade(this,'80')"><span class="badge b-bl">80%</span></td><td onclick="editGrade(this,'82')"><span class="badge b-bl">82%</span></td><td onclick="editGrade(this,'85')"><span class="badge b-gr">85%</span></td><td onclick="editGrade(this,'83')"><span class="badge b-bl">83%</span></td><td onclick="editGrade(this,'Pending')"><span class="badge b-nu">Pending</span></td><td><strong style="color:var(--gold)">82%</strong></td><td><button class="btn btn-bl btn-xs" onclick="openEmailDrawer('Yousif A.')">Email</button></td></tr>
+          <tr><td>Hamad Al-Kuwari</td><td onclick="editGrade(this,'60')"><span class="badge b-go">60%</span></td><td onclick="editGrade(this,'52')"><span class="badge b-re">52%</span></td><td onclick="editGrade(this,'55')"><span class="badge b-re">55%</span></td><td onclick="editGrade(this,'48')"><span class="badge b-re">48%</span></td><td onclick="editGrade(this,'58')"><span class="badge b-re">58%</span></td><td onclick="editGrade(this,'Not submitted')"><span class="badge b-re">Missing</span></td><td><strong style="color:var(--red)">54%</strong></td><td><button class="btn btn-re btn-xs" onclick="openEmailDrawer('Hamad K.')">Email</button></td></tr>
+          <tr><td>Sara Al-Mahmoud</td><td onclick="editGrade(this,'70')"><span class="badge b-bl">70%</span></td><td onclick="editGrade(this,'65')"><span class="badge b-go">65%</span></td><td onclick="editGrade(this,'63')"><span class="badge b-go">63%</span></td><td onclick="editGrade(this,'Not submitted')"><span class="badge b-re">Missing</span></td><td onclick="editGrade(this,'62')"><span class="badge b-go">62%</span></td><td onclick="editGrade(this,'Not submitted')"><span class="badge b-re">Missing</span></td><td><strong style="color:var(--red)">61%</strong></td><td><button class="btn btn-re btn-xs" onclick="openEmailDrawer('Sara M.')">Email</button></td></tr>
+          <tr><td>Fatima Al-Rashed</td><td onclick="editGrade(this,'90')"><span class="badge b-gr">90%</span></td><td onclick="editGrade(this,'88')"><span class="badge b-gr">88%</span></td><td onclick="editGrade(this,'92')"><span class="badge b-gr">92%</span></td><td onclick="editGrade(this,'94')"><span class="badge b-gr">94%</span></td><td onclick="editGrade(this,'91')"><span class="badge b-gr">91%</span></td><td onclick="editGrade(this,'Submitted')"><span class="badge b-gr">Done</span></td><td><strong style="color:var(--green)">91%</strong></td><td><button class="btn btn-bl btn-xs" onclick="openEmailDrawer('Fatima R.')">Email</button></td></tr>
+          <tr><td>Omar Al-Dosari</td><td onclick="editGrade(this,'75')"><span class="badge b-bl">75%</span></td><td onclick="editGrade(this,'76')"><span class="badge b-bl">76%</span></td><td onclick="editGrade(this,'78')"><span class="badge b-bl">78%</span></td><td onclick="editGrade(this,'80')"><span class="badge b-bl">80%</span></td><td onclick="editGrade(this,'75')"><span class="badge b-bl">75%</span></td><td onclick="editGrade(this,'Submitted')"><span class="badge b-gr">Done</span></td><td><strong style="color:var(--blue)">77%</strong></td><td><button class="btn btn-bl btn-xs" onclick="openEmailDrawer('Omar D.')">Email</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TEACHER ATTENDANCE -->
+<div class="view" id="v-t-attendance">
+  <div class="ph"><h1>Class Attendance 📋</h1><p>Grade 12 Economics · Mark attendance for today's class</p></div>
+  <div class="g4">
+    <div class="sc" onclick="notify('✅ Mark all remaining students as Present?')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-gr">✅</div><div class="delta d-up">Today</div></div><div class="sc-val" id="att-present-count">25</div><div class="sc-lbl">Present</div><div class="sc-bar"><div class="bf bf-gr" id="att-bar" style="width:89.3%"></div></div></div>
+    <div class="sc" onclick="notify('❌ Absent students: Hamad K., Sara M., Ahmad S. — parent emails pre-drafted.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-re">❌</div><div class="delta d-dn">Today</div></div><div class="sc-val" id="att-absent-count">3</div><div class="sc-lbl">Absent</div><div class="sc-bar"><div class="bf bf-re" style="width:10.7%"></div></div></div>
+    <div class="sc" onclick="notify('⏰ Late student: Noor K. — arrived 10 minutes late.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-go">⏰</div><div class="delta d-nu">Today</div></div><div class="sc-val">1</div><div class="sc-lbl">Late</div><div class="sc-bar"><div class="bf bf-go" style="width:3.6%"></div></div></div>
+    <div class="sc" onclick="notify('📊 Term 3 class attendance: 93.2% — above AHIS minimum of 90%.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-bl">📊</div><div class="delta d-up">Term avg</div></div><div class="sc-val">93.2%</div><div class="sc-lbl">Class Attendance Rate</div><div class="sc-bar"><div class="bf bf-bl" style="width:93.2%"></div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><div class="ct">Mark Today's Attendance — Sunday 26 April</div><button class="btn btn-go btn-sm" onclick="notify('✓ Attendance saved and synced to Nexus')">💾 Save & Sync</button></div>
+    <div id="att-list"></div>
+  </div>
+</div>
+
+<!-- EMAIL ENGINE -->
+<div class="view" id="v-t-email">
+  <div class="ph"><h1>Email Engine 📬</h1><p>AI drafts parent emails based on real-time grade and attendance data. Select a student to generate a draft.</p></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><div class="ct">Select Student</div></div>
+      <div class="li" onclick="openEmailDrawer('Hamad K.');setEmailStudent('Hamad K.')"><div class="li-ic ic-re" style="font-size:16px;">👤</div><div><div class="li-name">Hamad Al-Kuwari</div><div class="li-sub">Grade drop −8.2% · Test score 52% · Action required</div></div><div class="li-end"><span class="badge b-re">At Risk</span></div></div>
+      <div class="li" onclick="openEmailDrawer('Sara M.')"><div class="li-ic ic-re" style="font-size:16px;">👤</div><div><div class="li-name">Sara Al-Mahmoud</div><div class="li-sub">3 missed assignments · Attendance 88%</div></div><div class="li-end"><span class="badge b-re">At Risk</span></div></div>
+      <div class="li" onclick="openEmailDrawer('Yousif A.')"><div class="li-ic ic-gr" style="font-size:16px;">👤</div><div><div class="li-name">Yousif Al-Taqi</div><div class="li-sub">Excellent progress · Commendation</div></div><div class="li-end"><span class="badge b-gr">Positive</span></div></div>
+      <div class="li" onclick="openEmailDrawer('Fatima R.')"><div class="li-ic ic-gr" style="font-size:16px;">👤</div><div><div class="li-name">Fatima Al-Rashed</div><div class="li-sub">91% — Top of class</div></div><div class="li-end"><span class="badge b-gr">Positive</span></div></div>
+      <div class="li" onclick="openEmailDrawer('Omar D.')"><div class="li-ic ic-bl" style="font-size:16px;">👤</div><div><div class="li-name">Omar Al-Dosari</div><div class="li-sub">77% — Stable progress</div></div><div class="li-end"><span class="badge b-bl">Neutral</span></div></div>
+      <div class="li" onclick="openEmailDrawer('All Students')"><div class="li-ic ic-go" style="font-size:16px;">📢</div><div><div class="li-name">All Parents — Class Update</div><div class="li-sub">Lesson agenda, upcoming tests, reminders</div></div><div class="li-end"><span class="badge b-go">Broadcast</span></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="ct">Email Stats This Term</div></div>
+      <div class="sbr-row"><div class="sbr-lbl">Emails sent</div><div class="sbr-track"><div class="sbr-fill bf-bl" style="width:70%"></div></div><div class="sbr-val" style="color:var(--blue)">42</div></div>
+      <div class="sbr-row"><div class="sbr-lbl">Parent response rate</div><div class="sbr-track"><div class="sbr-fill bf-gr" style="width:68%"></div></div><div class="sbr-val" style="color:var(--green)">68%</div></div>
+      <div class="sbr-row"><div class="sbr-lbl">At-risk follow-ups</div><div class="sbr-track"><div class="sbr-fill bf-re" style="width:30%"></div></div><div class="sbr-val" style="color:var(--red)">18</div></div>
+      <div class="sbr-row"><div class="sbr-lbl">Grade recovery rate</div><div class="sbr-track"><div class="sbr-fill bf-go" style="width:44%"></div></div><div class="sbr-val" style="color:var(--gold)">44%</div></div>
+      <div style="margin-top:16px;padding:12px;background:var(--green-l);border-radius:8px;font-size:12px;color:var(--green);">✅ <strong>AI Insight:</strong> Students whose parents received proactive emails showed 44% grade recovery within 2 weeks.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!-- PARENT HOME -->
+<!-- ═══════════════════════════════ -->
+<div class="view" id="v-p-home">
+  <div class="ph"><h1>Yousif's Dashboard 💙</h1><p>Grade 12 IB · Al-Hekma International School · Real-time updates</p></div>
+  <div class="aia aia-teal">
+    <div class="aia-ic ic-teal">🤖</div>
+    <div style="flex:1"><div class="aia-label lbl-teal">Nexus Concierge</div><div class="aia-txt"><strong>Yousif's Biology average dropped 6.2%</strong> this week after the Cell Respiration test. His Economics IA is due in 4 days. Click "Book Meeting" or ask the AI bot any question.</div></div>
+    <button class="btn btn-te btn-sm" onclick="showView('p-meeting');setNavActive('ni-pmeeting')">Book Meeting →</button>
+  </div>
+  <div class="g4">
+    <div class="sc" onclick="showView('p-progress');setNavActive('ni-pprogress')"><div class="sc-top"><div class="sc-ic ic-te">📊</div><div class="delta d-up">Strong</div></div><div class="sc-val">84.2%</div><div class="sc-lbl">Overall Average</div><div class="sc-bar"><div class="bf bf-te" style="width:84.2%"></div></div></div>
+    <div class="sc" onclick="showView('p-progress');setNavActive('ni-pprogress')"><div class="sc-top"><div class="sc-ic ic-gr">✅</div><div class="delta d-up">Excellent</div></div><div class="sc-val">96.7%</div><div class="sc-lbl">Attendance Rate</div><div class="sc-bar"><div class="bf bf-gr" style="width:96.7%"></div></div></div>
+    <div class="sc" onclick="showView('p-alerts');setNavActive('ni-palerts')"><div class="sc-top"><div class="sc-ic ic-re">🔔</div><div class="delta d-dn">2 new</div></div><div class="sc-val">2</div><div class="sc-lbl">Active Alerts</div><div class="sc-bar"><div class="bf bf-re" style="width:20%"></div></div></div>
+    <div class="sc" onclick="showView('p-meeting');setNavActive('ni-pmeeting')"><div class="sc-top"><div class="sc-ic ic-go">📋</div><div class="delta d-dn">Urgent</div></div><div class="sc-val">3</div><div class="sc-lbl">Upcoming Deadlines</div><div class="sc-bar"><div class="bf bf-go" style="width:30%"></div></div></div>
+  </div>
+  <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="feed f-red" onclick="showView('p-alerts');setNavActive('ni-palerts')"><div class="feed-ic ic-re" style="font-size:20px;">⚠️</div><div style="flex:1"><div class="feed-label" style="color:var(--red)">Priority Alert</div><div class="feed-title">Biology dropped 6.2% this week</div><div class="feed-desc">Yousif scored 68% on the Cell Respiration test (Apr 22). Teacher: "Strong verbal understanding — written evaluation needs improvement."</div><div class="feed-acts"><button class="btn btn-bl btn-sm" onclick="showView('p-meeting');setNavActive('ni-pmeeting');event.stopPropagation()">📅 Book Meeting</button><button class="btn btn-wh btn-sm" onclick="showView('p-progress');setNavActive('ni-pprogress');event.stopPropagation()">View Report</button></div></div></div>
+      <div class="feed f-warn" onclick="openRag('Economics IA','📄','IA Deadline','Yousif\'s Economics IA on Housing Markets is due in 4 days. He has started the draft. Nexus recommends running it through Sentinel before submission. Current Humanization Score is 71% — it needs improvement.')"><div class="feed-ic ic-go" style="font-size:20px;">📋</div><div style="flex:1"><div class="feed-label" style="color:var(--gold)">Deadline in 4 Days</div><div class="feed-title">Economics IA Draft Due</div><div class="feed-desc">Yousif has started the draft. Nexus recommends running it through Sentinel before submitting. Current Humanization Score: 71%.</div></div></div>
+      <div class="feed f-good"><div class="feed-ic ic-gr" style="font-size:20px;">🏆</div><div style="flex:1"><div class="feed-label" style="color:var(--green)">Great News</div><div class="feed-title">Mathematics: 89% — Top of Class!</div><div class="feed-desc">Mr. Khalil: "Yousif showed exceptional problem-solving in the calculus integration unit. A standout student."</div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="ct">Subject Performance</div><button class="btn btn-wh btn-sm" onclick="showView('p-progress');setNavActive('ni-pprogress')">Full Report →</button></div>
+      <div class="sp-row"><div class="sp-name">Economics HL</div><div class="sp-track"><div class="sp-fill bf-go" style="width:82%"></div></div><div class="sp-val" style="color:var(--gold)">82%</div></div>
+      <div class="sp-row"><div class="sp-name">Biology HL</div><div class="sp-track"><div class="sp-fill bf-re" style="width:74%"></div></div><div class="sp-val" style="color:var(--red)">74%</div></div>
+      <div class="sp-row"><div class="sp-name">Mathematics AA HL</div><div class="sp-track"><div class="sp-fill bf-bl" style="width:89%"></div></div><div class="sp-val" style="color:var(--blue)">89%</div></div>
+      <div class="sp-row"><div class="sp-name">History HL</div><div class="sp-track"><div class="sp-fill" style="width:86%;height:100%;border-radius:4px;animation:grow 1.3s ease-out;background:linear-gradient(90deg,#A78BFA,#7C3AED)"></div></div><div class="sp-val" style="color:var(--purple)">86%</div></div>
+      <div class="sp-row"><div class="sp-name">English A: L&L HL</div><div class="sp-track"><div class="sp-fill" style="width:91%;height:100%;border-radius:4px;animation:grow 1.3s ease-out;background:linear-gradient(90deg,#F9A8D4,#BE185D)"></div></div><div class="sp-val" style="color:#BE185D">91%</div></div>
+      <button class="btn btn-te" style="width:100%;margin-top:14px;" onclick="showView('p-meeting');setNavActive('ni-pmeeting')">📅 Book a Teacher Meeting</button>
+    </div>
+  </div>
+</div>
+
+<!-- PARENT ALERTS -->
+<div class="view" id="v-p-alerts">
+  <div class="ph"><h1>Alerts & Notifications 🔔</h1><p>All Nexus AI alerts for Yousif — click any alert to take action</p></div>
+  <div class="aia aia-red"><div class="aia-ic ic-red">🔴</div><div style="flex:1"><div class="aia-label lbl-red">2 Active Alerts</div><div class="aia-txt">Nexus AI has flagged 2 issues that require your attention. Tap each to see recommended actions.</div></div></div>
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div class="feed f-red" onclick="showView('p-meeting');setNavActive('ni-pmeeting')"><div class="feed-ic ic-re" style="font-size:20px;">🧬</div><div style="flex:1"><div class="feed-label" style="color:var(--red)">Grade Drop Alert · Biology HL</div><div class="feed-title">Average dropped 6.2% — Action Recommended</div><div class="feed-desc">Yousif scored 68% on the Cell Respiration test (Apr 22, 2026). Teacher Ms. Al-Mansoori commented: <em>"Strong verbal understanding but written evaluation needs significant improvement."</em><br><br>Nexus AI recommends: Book a meeting with Ms. Al-Mansoori to discuss a revision plan before the Genetics test on May 5.</div><div class="feed-acts"><button class="btn btn-bl btn-sm" onclick="showView('p-meeting');setNavActive('ni-pmeeting');event.stopPropagation()">📅 Book Meeting Now</button></div></div></div>
+    <div class="feed f-warn" onclick="openRag('Economics IA','📄','IA Deadline','The Economics IA is due in 4 days. Yousif has a draft but it has not yet been run through Sentinel. His Humanization Score is currently 71% which means some sections may appear AI-generated. Recommended action: have Yousif use Sentinel to review the draft tonight.')"><div class="feed-ic ic-go" style="font-size:20px;">📄</div><div style="flex:1"><div class="feed-label" style="color:var(--gold)">Deadline Alert · Economics IA</div><div class="feed-title">Internal Assessment due in 4 days</div><div class="feed-desc">Yousif has started the Economics IA draft but it has not been reviewed by Sentinel AI yet. His Humanization Score is 71% — some sections may need revision. Recommended: have Yousif use Sentinel tonight.</div><div class="feed-acts"><button class="btn btn-go btn-sm" onclick="event.stopPropagation();notify('Reminder sent to Yousif\'s phone ✓')">📱 Send Reminder to Yousif</button></div></div></div>
+    <div class="feed f-good"><div class="feed-ic ic-gr" style="font-size:20px;">🏆</div><div style="flex:1"><div class="feed-label" style="color:var(--green)">Achievement · Mathematics AA HL</div><div class="feed-title">Top of class — 89% on Paper 1 Mock</div><div class="feed-desc">Mr. Khalil reported that Yousif achieved 89% on the Paper 1 mock, placing him top of the class. "Exceptional problem-solving — a standout student." No action required.</div></div></div>
+    <div class="feed"><div class="feed-ic ic-bl" style="font-size:20px;">📅</div><div style="flex:1"><div class="feed-label" style="color:var(--blue)">Upcoming · Biology Test</div><div class="feed-title">Genetics test in 9 days — May 5, 2026</div><div class="feed-desc">Yousif's Biology Genetics test is in 9 days. Given his recent grade drop, Nexus recommends starting revision now. A study guide has been loaded into his AI chat for Biology.</div><div class="feed-acts"><button class="btn btn-bl btn-sm" onclick="openRag('Biology HL','🧬','Genetics','The Genetics test is in 9 days. Key topics: Mendelian genetics, inheritance patterns (dominant/recessive), dihybrid crosses, and natural selection. Let me create a study schedule or quiz you — which would you like?')">Open Study Chat</button></div></div></div>
+  </div>
+</div>
+
+<!-- PARENT PROGRESS -->
+<div class="view" id="v-p-progress">
+  <div class="ph"><h1>Academic Progress 📈</h1><p>Yousif Al-Taqi · Grade 12 IB · Full term performance report</p></div>
+  <div class="g4">
+    <div class="sc" onclick="openRag('Overall Average','📊','Term Performance','Yousif's 84.2% average puts him in the top 30% of Grade 12 IB. His strongest subject is English (91%) and the area needing most attention is Biology (74%). Want more detail on any subject?')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-te">📊</div><div class="delta d-up">↑ Term avg</div></div><div class="sc-val">84.2%</div><div class="sc-lbl">Overall Average</div><div class="sc-bar"><div class="bf bf-te" style="width:84.2%"></div></div></div>
+    <div class="sc" onclick="notify('✅ 96.7% attendance — excellent. 58/60 days present. 2 medical absences, 1 late arrival.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-gr">✅</div><div class="delta d-up">Excellent</div></div><div class="sc-val">96.7%</div><div class="sc-lbl">Attendance</div><div class="sc-bar"><div class="bf bf-gr" style="width:96.7%"></div></div></div>
+    <div class="sc" onclick="openRag('IB Prediction','🎯','Predicted Score 38/45','Yousif is predicted 38/45 IB points — a strong score that qualifies for most universities in the region and UK. To reach 40+: bring Biology to 80% and deliver a strong Economics IA. Shall I show the breakdown by subject?')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-bl">🎯</div><div class="delta d-up">Predicted</div></div><div class="sc-val">38/45</div><div class="sc-lbl">Predicted IB Score</div><div class="sc-bar"><div class="bf bf-bl" style="width:84.4%"></div></div></div>
+    <div class="sc" onclick="notify('📋 14 assessments completed this term: 5 unit tests, 4 quizzes, 3 essays, 1 mock, 1 IA draft.')" style="cursor:pointer;"><div class="sc-top"><div class="sc-ic ic-go">📋</div><div class="delta d-nu">This term</div></div><div class="sc-val">14</div><div class="sc-lbl">Assessments Completed</div><div class="sc-bar"><div class="bf bf-go" style="width:70%"></div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><div class="ct">Detailed Subject Breakdown</div><button class="btn btn-wh btn-sm" onclick="notify('📥 Downloading full progress report PDF...')">📥 Download Report</button></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Subject</th><th>Current Grade</th><th>Trend</th><th>Teacher Comment</th><th>Predicted IB</th><th>AI Advice</th></tr></thead>
+        <tbody>
+          <tr><td>Economics HL</td><td><strong style="color:var(--gold)">82%</strong></td><td style="color:var(--green);font-weight:600">↑ +3%</td><td style="font-size:11px;color:var(--gray500)">Strong analysis, improve evaluation</td><td><span class="badge b-bl">6/7</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('Economics HL','📊','Progress','At 82%, Yousif is on track for a 6 in Economics. To reach a 7, he needs to improve his evaluation paragraphs — specifically concluding with a justified overall judgment. Want me to show him an example?')">Ask AI</button></td></tr>
+          <tr><td>Biology HL</td><td><strong style="color:var(--red)">74%</strong></td><td style="color:var(--red);font-weight:600">↓ −2%</td><td style="font-size:11px;color:var(--gray500)">Written evaluation needs improvement</td><td><span class="badge b-go">5/7</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('Biology HL','🧬','Progress','Biology is a concern at 74% and declining. The key issue is written evaluation — Yousif understands concepts verbally but struggles to express them formally. For the Genetics test: practice writing full exam-style answers under timed conditions.')">Ask AI</button></td></tr>
+          <tr><td>Mathematics AA HL</td><td><strong style="color:var(--blue)">89%</strong></td><td style="color:var(--green);font-weight:600">↑ +1%</td><td style="font-size:11px;color:var(--gray500)">Exceptional — top of class</td><td><span class="badge b-gr">7/7</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('Mathematics AA HL','📐','Progress','Yousif is predicted a 7 in Mathematics — keep it up! For Paper 2, make sure to show full working for integration questions even when the answer seems obvious. Partial marks are awarded for method.')">Ask AI</button></td></tr>
+          <tr><td>History HL</td><td><strong style="color:var(--purple)">86%</strong></td><td style="color:var(--green);font-weight:600">↑ +4%</td><td style="font-size:11px;color:var(--gray500)">Excellent source analysis</td><td><span class="badge b-bl">6/7</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('History HL','📜','Progress','86% is excellent — predicted a 6 trending toward a 7. The key to unlocking the 7 is more sophisticated counter-argument integration in essays. Yousif\'s source analysis is already strong.')">Ask AI</button></td></tr>
+          <tr><td>English A: L&L HL</td><td><strong style="color:#BE185D">91%</strong></td><td style="color:var(--green);font-weight:600">↑ +2%</td><td style="font-size:11px;color:var(--gray500)">Outstanding analysis</td><td><span class="badge b-gr">7/7</span></td><td><button class="btn btn-wh btn-xs" onclick="openRag('English A','📖','Progress','91% in English — predicted a 7! Yousif\'s textual analysis is perceptive and well-structured. For Paper 2, ensure his comparative thesis is specific and evaluative from the first sentence.')">Ask AI</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PARENT BOOK MEETING -->
+<div class="view" id="v-p-meeting">
+  <div class="ph"><h1>Book a Meeting 🤝</h1><p>Schedule a meeting with any of Yousif's teachers — Nexus syncs with the school calendar automatically</p></div>
+  <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-hd"><div class="ct">Select Teacher</div></div>
+        <div class="li" id="meet-bio" onclick="selectTeacher('Ms. Fatima Al-Mansoori','Biology HL','msbio')"><div class="li-ic ic-gr" style="font-size:16px;">🧬</div><div><div class="li-name">Ms. Fatima Al-Mansoori</div><div class="li-sub">Biology HL · Recommended (grade drop)</div></div><div class="li-end"><span class="badge b-re">Priority</span></div></div>
+        <div class="li" id="meet-econ" onclick="selectTeacher('Mr. Omar Hassan','Economics HL','msecon')"><div class="li-ic ic-bl" style="font-size:16px;">📊</div><div><div class="li-name">Mr. Omar Hassan</div><div class="li-sub">Economics HL · IA deadline approaching</div></div><div class="li-end"><span class="badge b-go">Suggested</span></div></div>
+        <div class="li" id="meet-math" onclick="selectTeacher('Mr. Khalid Khalil','Mathematics AA HL','msmath')"><div class="li-ic ic-go" style="font-size:16px;">📐</div><div><div class="li-name">Mr. Khalid Khalil</div><div class="li-sub">Mathematics AA HL · Optional</div></div><div class="li-end"><span class="badge b-gr">Available</span></div></div>
+        <div class="li" id="meet-hist" onclick="selectTeacher('Ms. Layla Ibrahim','History HL','mshist')"><div class="li-ic ic-pu" style="font-size:16px;">📜</div><div><div class="li-name">Ms. Layla Ibrahim</div><div class="li-sub">History HL · Optional</div></div><div class="li-end"><span class="badge b-gr">Available</span></div></div>
+      </div>
+    </div>
+    <div class="card" id="meeting-slots">
+      <div class="card-hd"><div class="ct">Available Slots</div></div>
+      <div style="text-align:center;padding:30px;color:var(--gray400);">← Select a teacher to see available slots</div>
+    </div>
+  </div>
+</div>
+
+<!-- PARENT REPORTS -->
+<div class="view" id="v-p-reports">
+  <div class="ph"><h1>School Reports 📄</h1><p>All of Yousif's official reports and documents from Al-Hekma International School</p></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><div class="ct">Available Reports</div></div>
+      <div class="li" onclick="notify('📄 Opening Term 2 Progress Card PDF...')"><div class="li-ic ic-bl" style="font-size:16px;">📄</div><div><div class="li-name">Term 2 Progress Card</div><div class="li-sub">Feb 2026 · Official AHIS Report</div></div><div class="li-end"><button class="btn btn-bl btn-xs">Download</button></div></div>
+      <div class="li" onclick="notify('📄 Opening Term 1 Progress Card PDF...')"><div class="li-ic ic-bl" style="font-size:16px;">📄</div><div><div class="li-name">Term 1 Progress Card</div><div class="li-sub">Nov 2025 · Official AHIS Report</div></div><div class="li-end"><button class="btn btn-bl btn-xs">Download</button></div></div>
+      <div class="li" onclick="notify('📊 Opening Predicted Grades Report...')"><div class="li-ic ic-go" style="font-size:16px;">📊</div><div><div class="li-name">IB Predicted Grades 2026</div><div class="li-sub">Predicted: 38/45 · Generated by Nexus AI</div></div><div class="li-end"><button class="btn btn-go btn-xs">View</button></div></div>
+      <div class="li" onclick="notify('📅 Opening Attendance Certificate...')"><div class="li-ic ic-gr" style="font-size:16px;">📅</div><div><div class="li-name">Attendance Certificate</div><div class="li-sub">Term 3 · 96.7% Attendance</div></div><div class="li-end"><button class="btn btn-wh btn-xs">Download</button></div></div>
+      <div class="li" onclick="notify('🛡️ Opening Sentinel AI Report...')"><div class="li-ic ic-te" style="font-size:16px;">🛡️</div><div><div class="li-name">Sentinel AI Integrity Report</div><div class="li-sub">Economics IA · Humanization: 71%</div></div><div class="li-end"><button class="btn btn-wh btn-xs">View</button></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="ct">Request a Document</div></div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="li" onclick="notify('📧 Request sent — document will arrive within 2 school days')"><div class="li-ic ic-bl" style="font-size:16px;">📝</div><div><div class="li-name">Official Enrollment Letter</div><div class="li-sub">For visa / embassy purposes</div></div><div class="li-end"><button class="btn btn-bl btn-xs">Request</button></div></div>
+        <div class="li" onclick="notify('📧 Request sent — document will arrive within 2 school days')"><div class="li-ic ic-go" style="font-size:16px;">📜</div><div><div class="li-name">Good Standing Letter</div><div class="li-sub">For university applications</div></div><div class="li-end"><button class="btn btn-go btn-xs">Request</button></div></div>
+        <div class="li" onclick="notify('📧 Request sent — document will arrive within 2 school days')"><div class="li-ic ic-gr" style="font-size:16px;">🏅</div><div><div class="li-name">Academic Achievement Certificate</div><div class="li-sub">Term honours, awards</div></div><div class="li-end"><button class="btn btn-wh btn-xs">Request</button></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="view" id="v-settings">
+  <div class="ph"><h1>Settings ⚙️</h1><p>Customise your Nexus experience</p></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd"><div class="ct">Notifications</div></div>
+      <div class="settings-row"><div><div style="font-weight:600;font-size:13px;">Grade Drop Alerts</div><div style="font-size:11px;color:var(--gray400);">Alert when grade drops >5% in a week</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><div><div style="font-weight:600;font-size:13px;">Deadline Reminders</div><div style="font-size:11px;color:var(--gray400);">3 days before each assignment</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><div><div style="font-weight:600;font-size:13px;">Sentinel Scan Prompts</div><div style="font-size:11px;color:var(--gray400);">Remind me to scan before submitting</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><div><div style="font-weight:600;font-size:13px;">WhatsApp Alerts</div><div style="font-size:11px;color:var(--gray400);">Send alerts to parent WhatsApp</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><div><div style="font-weight:600;font-size:13px;">Email Digest</div><div style="font-size:11px;color:var(--gray400);">Weekly summary email every Sunday</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="ct">AI Preferences</div></div>
+      <div class="settings-row"><div><div style="font-weight:600;font-size:13px;">Nexus AI Language</div><div style="font-size:11px;color:var(--gray400);">Response language for AI chat</div></div><select style="border:1px solid var(--gray200);border-radius:6px;padding:5px 10px;font-family:var(--font);font-size:12px;outline:none;color:var(--gray700);cursor:pointer;" onchange="notify('✓ Language preference saved')"><option>English</option><option>العربية</option><option>Both</option></select></div>
+      <div class="settings-row"><div><div style="font-weight:600;font-size:13px;">Sentinel Sensitivity</div><div style="font-size:11px;color:var(--gray400);">How strict AI detection should be</div></div><select style="border:1px solid var(--gray200);border-radius:6px;padding:5px 10px;font-family:var(--font);font-size:12px;outline:none;color:var(--gray700);cursor:pointer;" onchange="notify('✓ Sensitivity updated')"><option>Standard</option><option>Strict</option><option>Lenient</option></select></div>
+      <div class="settings-row"><div><div style="font-weight:600;font-size:13px;">Predictive Alerts</div><div style="font-size:11px;color:var(--gray400);">AI predicts issues before they happen</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><div><div style="font-weight:600;font-size:13px;">RAG Study Chat</div><div style="font-size:11px;color:var(--gray400);">AI study chat on subjects</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /ct -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div id="sb-overlay" onclick="closeSidebar()"></div>
+
+<!-- MOBILE BOTTOM NAV -->
+<div id="mob-nav">
+  <div class="mob-nav-inner" id="mob-nav-inner">
+    <!-- populated by JS per role -->
+  </div>
+</div>
+
+<!-- RAG PANEL -->
+<div id="rag-panel">
+  <div class="rp-hd">
+    <div class="rp-sic" id="rp-ic">📊</div>
+    <div><div class="rp-name" id="rp-name">AI Study Chat</div><div class="rp-hint" id="rp-hint">RAG-powered · Curriculum AI</div></div>
+    <button class="rp-close" onclick="closeRag()">✕</button>
+  </div>
+  <div class="rp-msgs" id="rp-msgs"></div>
+  <div class="rp-inp-row">
+    <input class="rp-inp" id="rp-inp" placeholder="Ask anything about this subject..." onkeydown="if(event.key==='Enter')sendRag()">
+    <button class="btn btn-bl btn-sm" onclick="sendRag()">Send</button>
+  </div>
+</div>
+
+<!-- EMAIL DRAWER -->
+<div id="email-drawer">
+  <div class="dr-pill"></div>
+  <div class="dr-hd">
+    <span style="font-size:20px;">📬</span>
+    <div class="dr-title">Auto-Email Engine</div>
+    <span id="drawer-for" class="badge b-bl" style="margin-left:4px;"></span>
+    <div class="tone-row">
+      <button class="tone-btn act" id="tone-warm" onclick="setTone('warm',this)">🤝 Warm</button>
+      <button class="tone-btn" id="tone-prof" onclick="setTone('professional',this)">💼 Professional</button>
+      <button class="tone-btn" id="tone-urg" onclick="setTone('urgent',this)">⚡ Urgent</button>
+    </div>
+    <button class="btn btn-gh btn-sm" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="dr-body">
+    <div style="font-size:10px;font-weight:700;color:var(--gray400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">AI-Generated Draft — Edit before sending</div>
+    <div class="email-prev" id="email-prev"><span id="email-txt"></span><span class="cursor-blink" id="email-cur" style="display:none"></span></div>
+    <div style="margin-top:12px;font-size:11px;color:var(--gray400);">✓ Pulls real-time data from Nexus gradebook & attendance records</div>
+  </div>
+  <div class="dr-foot">
+    <button class="btn btn-bl" onclick="sendEmail()">📤 Send Email</button>
+    <button class="btn btn-wh" onclick="editEmailDraft()">✏️ Edit Draft</button>
+    <div id="sent-ok" style="display:none;color:var(--green);font-size:13px;font-weight:600;">✓ Email sent to parent successfully!</div>
+  </div>
+</div>
+
+<!-- BOT -->
+<button id="bot-fab" onclick="toggleBot()">🤖</button>
+<div id="bot-win" class="closed">
+  <div class="bw-hd">
+    <div class="bw-av">🤖</div>
+    <div><div class="bw-nm">Nexus Concierge</div><div class="bw-st">● Online · Ask me anything</div></div>
+    <div class="lang-row"><button class="lng act" onclick="setLang('en',this)">EN</button><button class="lng" onclick="setLang('ar',this)">عر</button></div>
+  </div>
+  <div class="bw-msgs" id="bw-msgs">
+    <div class="bubble bbl-ai">Hi! I'm Nexus Concierge. Ask me about Yousif's grades, attendance, biology, economics, or book a meeting. Try: "why did he get a C in biology?" 👋</div>
+  </div>
+  <div class="bw-inp-row">
+    <input class="bw-inp" id="bw-inp" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')sendBot()">
+    <button class="bw-send" onclick="sendBot()">↑</button>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════════════
+// NEXUS AI ENGINE — Real Anthropic API Calls
+// ═══════════════════════════════════════════════════
+
+const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
+
+// Core API caller
+async function callClaude(systemPrompt, userMessage, maxTokens = 600) {
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: maxTokens,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.content[0].text;
+  } catch (e) {
+    console.error('Claude API error:', e);
+    return null;
+  }
+}
+
+// Multi-turn conversation caller
+async function callClaudeConversation(systemPrompt, messages, maxTokens = 600) {
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: maxTokens,
+        system: systemPrompt,
+        messages: messages
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.content[0].text;
+  } catch (e) {
+    console.error('Claude API error:', e);
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// STUDENT CONTEXT (used in all AI calls)
+// ═══════════════════════════════════════════════════
+const STUDENT_CONTEXT = `
+Student: Yousif Al-Taqi, Grade 12 IB, Al-Hekma International School (AHIS), Bahrain
+Current Grades: Economics HL 82%, Biology HL 74% (dropped 6.2% this week — Cell Respiration test 68%), Mathematics AA HL 89% (top of class), History HL 86%, English A: L&L HL 91%, TOK: A
+Attendance: 96.7% (2 absences, 1 late)
+Upcoming: Economics IA due in 4 days, Biology Genetics test May 5
+Teacher comments: Bio teacher: "Strong verbal understanding, written evaluation needs work." Math teacher: "Exceptional calculus work."
+Predicted IB: 38/45
+`;
+
+const SCHOOL_CONTEXT = `
+School: Al-Hekma International School (AHIS), Bahrain
+Curriculum: International Baccalaureate (IB) Diploma Programme
+Teacher: Mr. Omar Hassan, Grade 12 Economics HL
+Class: 28 students. At-risk: Hamad Al-Kuwari (54%, -8.2% drop), Sara Al-Mahmoud (61%, 3 missed assignments). Top: Fatima Al-Rashed (91%). 
+Current topic: Market Failure
+`;
+
+// ═══════════════════════════════════════════════════
+// RAG CHAT — Real AI per subject
+// ═══════════════════════════════════════════════════
+let ragConversations = {}; // {subjectKey: [{role, content}]}
+let currentRagSubject = '';
+let ragIsTyping = false;
+
+function getRagSystemPrompt(subject, unit) {
+  return `You are the Nexus AI Study Assistant for ${subject} at Al-Hekma International School (AHIS), Bahrain.
+${STUDENT_CONTEXT}
+Current topic: ${unit}
+
+You are a warm, expert IB tutor. Keep responses focused, practical and under 120 words unless the student asks for more detail. 
+Use IB command terms correctly. When relevant, reference Bahrain/Gulf real-world examples.
+If asked to quiz, give ONE question with 4 options (A-D) and the answer at the end.
+Format clearly — use line breaks for readability. Do not use markdown headers.`;
+}
+
+async function sendRag() {
+  if (ragIsTyping) return;
+  const inp = document.getElementById('rp-inp');
+  const val = inp.value.trim();
+  if (!val) return;
+  inp.value = '';
+  ragIsTyping = true;
+
+  const msgs = document.getElementById('rp-msgs');
+  msgs.innerHTML += `<div class="msg msg-usr" style="animation:fu .3s both">${escHtml(val)}</div>`;
+  msgs.innerHTML += `<div class="typing" id="rtyping"><span></span><span></span><span></span></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  const key = currentRagSubject;
+  if (!ragConversations[key]) ragConversations[key] = [];
+  ragConversations[key].push({ role: 'user', content: val });
+
+  const sysPrompt = getRagSystemPrompt(
+    document.getElementById('rp-name').textContent,
+    document.getElementById('rp-hint').textContent.split('·')[0].trim()
+  );
+
+  const reply = await callClaudeConversation(sysPrompt, ragConversations[key]);
+  
+  const t = document.getElementById('rtyping');
+  if (t) t.remove();
+  
+  if (reply) {
+    ragConversations[key].push({ role: 'assistant', content: reply });
+    streamTextIntoEl(msgs, reply, 'msg msg-ai', () => { msgs.scrollTop = msgs.scrollHeight; });
+  } else {
+    msgs.innerHTML += `<div class="msg msg-ai">Sorry, I couldn't connect right now. Please check your connection and try again.</div>`;
+  }
+  ragIsTyping = false;
+}
+
+// ═══════════════════════════════════════════════════
+// SENTINEL AI — Real humanization analysis
+// ═══════════════════════════════════════════════════
+async function runSentinelAnalysis(text) {
+  const prompt = `You are Sentinel AI, an academic integrity tool for IB students at Al-Hekma International School, Bahrain.
+
+Analyse the following student essay excerpt and return ONLY valid JSON (no markdown, no explanation outside JSON):
+
+{
+  "humanScore": <0-100, how human the writing sounds>,
+  "stylometric": <0-100, match to student's typical writing style>,
+  "lexical": <0-100, lexical diversity score>,
+  "burstiness": <0-100, sentence length variation>,
+  "variance": <0-100, structural variance>,
+  "flagged": <true/false, whether AI-generation is likely>,
+  "flagParagraph": "<which paragraph or sentence seems most AI-generated>",
+  "socratic": "<one specific Socratic question to help the student make it more personal and authentic>",
+  "verdict": "<one-sentence overall verdict>"
+}
+
+Student text:
+${text.substring(0, 800)}`;
+
+  const reply = await callClaude('You are Sentinel AI academic integrity analyser. Return only valid JSON.', prompt, 400);
+  if (!reply) return null;
+  
+  try {
+    const clean = reply.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  } catch(e) {
+    // Fallback scores if JSON parse fails
+    return {
+      humanScore: 68, stylometric: 72, lexical: 61, burstiness: 44, variance: 55,
+      flagged: true,
+      flagParagraph: "The opening paragraph",
+      socratic: "Can you rewrite the opening sentence starting from a specific moment in class when this topic clicked for you?",
+      verdict: "Some sections show patterns common in AI-generated text. Consider adding personal examples."
+    };
+  }
+}
+
+async function startScan() {
+  const text = document.getElementById('essay-ta').value.trim();
+  if (!text) { notify('Please paste your essay text first'); return; }
+  
+  const zone = document.getElementById('scan-zone');
+  zone.classList.add('scanning');
+  document.getElementById('scan-wait').style.display = 'none';
+  document.getElementById('scan-results').style.display = 'none';
+  document.getElementById('overall-score').textContent = '–';
+  document.getElementById('overall-score').style.color = 'var(--gray300)';
+  
+  const steps = ['Extracting text chunks...', 'Building embedding vectors...', 'Comparing writing style...', 'Analysing lexical patterns...', 'Generating report...'];
+  let si = 0;
+  document.getElementById('scan-status').style.display = 'block';
+  const stepIv = setInterval(() => {
+    if (si < steps.length) document.getElementById('scan-status').textContent = steps[si++];
+  }, 600);
+  
+  const result = await runSentinelAnalysis(text);
+  clearInterval(stepIv);
+  zone.classList.remove('scanning');
+  document.getElementById('scan-status').style.display = 'none';
+  
+  if (!result) { notify('Connection error — please try again'); return; }
+  
+  const score = result.humanScore;
+  const scoreEl = document.getElementById('overall-score');
+  scoreEl.textContent = score + '%';
+  scoreEl.style.color = score >= 80 ? 'var(--green)' : score >= 65 ? 'var(--gold)' : 'var(--red)';
+  
+  // Animate bars
+  const bars = [
+    { id: 'sb1', val: result.humanScore, cls: 'bf-go' },
+    { id: 'sb2', val: result.stylometric, cls: 'bf-gr' },
+    { id: 'sb3', val: result.lexical, cls: 'bf-bl' },
+    { id: 'sb4', val: result.burstiness, cls: 'bf-re' },
+    { id: 'sb5', val: result.variance, cls: 'bf-te' }
+  ];
+  const vals = ['sv1','sv2','sv3','sv4','sv5'];
+  const colors = ['var(--gold)','var(--green)','var(--blue)','var(--red)','var(--teal)'];
+  
+  document.getElementById('scan-results').style.display = 'block';
+  bars.forEach((b, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(b.id);
+      const vel = document.getElementById(vals[i]);
+      if (el) el.style.width = b.val + '%';
+      if (vel) { vel.textContent = b.val + '%'; vel.style.color = colors[i]; }
+    }, i * 120);
+  });
+  
+  // Update flag card
+  if (result.flagged) {
+    document.getElementById('flag-para').textContent = '"' + result.flagParagraph + '"';
+    document.getElementById('flag-socratic').innerHTML = '💡 <strong>Socratic Prompt:</strong> ' + result.socratic;
+    document.getElementById('flag-verdict').textContent = result.verdict;
+    document.getElementById('flag-card').style.display = 'block';
+  } else {
+    document.getElementById('flag-card').style.display = 'none';
+  }
+  
+  document.getElementById('rewrite-result').style.display = 'none';
+}
+
+let rewriting = false;
+async function rewriteWithAI() {
+  if (rewriting) return;
+  rewriting = true;
+  const text = document.getElementById('essay-ta').value.trim();
+  const el = document.getElementById('rewrite-result');
+  el.style.display = 'block';
+  el.textContent = 'Rewriting...';
+  
+  const prompt = `You are helping Yousif, a Grade 12 IB Economics student at AHIS Bahrain, make his essay paragraph sound more authentically human and personal.
+
+Original paragraph:
+"${text.substring(0, 400)}"
+
+Rewrite ONLY the first paragraph (max 80 words) to:
+- Start with a personal observation from Bahrain or class
+- Use natural student voice, not formal academic language
+- Keep the economic argument intact
+- Sound genuinely like a 17-year-old IB student who lives in Bahrain
+
+Return ONLY the rewritten paragraph, no explanation.`;
+
+  const reply = await callClaude('You are an IB writing coach who helps students sound more authentic.', prompt, 200);
+  el.textContent = '';
+  
+  if (reply) {
+    streamTextInto(el, reply, () => {
+      rewriting = false;
+      notify('✓ Rewrite complete — does this sound more like you?');
+    });
+  } else {
+    el.textContent = 'Connection error — please try again';
+    rewriting = false;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// EMAIL ENGINE — Real AI drafts
+// ═══════════════════════════════════════════════════
+let currentEmailStudent = '';
+let currentTone = 'professional';
+let emailGenerating = false;
+
+async function generateEmail(student, tone) {
+  const toneGuide = {
+    warm: 'warm, empathetic, supportive parent communication. Use first names where appropriate.',
+    professional: 'professional and formal, appropriate for school communication. Clear and informative.',
+    urgent: 'urgent and action-oriented. Make it clear immediate response is needed. Be direct but respectful.'
+  };
+
+  const studentData = {
+    'Hamad K.': 'Hamad Al-Kuwari — current average 54%, dropped 8.2% this week, scored 52% on Test 2, 2 outstanding assignments, attendance 88%',
+    'Sara M.': 'Sara Al-Mahmoud — current average 61%, dropped 5.9%, 3 missed assignments in 2 weeks, attendance 88%',
+    'Yousif A.': 'Yousif Al-Taqi — current average 82%, improving (+3.2%), excellent class participation, Economics IA due in 4 days',
+    'Fatima R.': 'Fatima Al-Rashed — current average 91%, top of class, 100% attendance, exemplary performance',
+    'Omar D.': 'Omar Al-Dosari — current average 77%, stable positive trend, strong case study work',
+    'Noor K.': 'Noor Al-Khalifa — current average 79%, improving, strong quiz performance, 97% attendance',
+    'All Students': 'All Grade 12 Economics parents — weekly update about Market Failure topic, upcoming IA deadline April 30, test May 7'
+  };
+
+  const prompt = `You are Mr. Omar Hassan, Grade 12 Economics teacher at Al-Hekma International School, Bahrain.
+Write a ${toneGuide[tone]} parent email about this student:
+${studentData[student] || student}
+
+Format:
+- Subject line: [SUBJECT: ...]  
+- Then the email body
+- Sign off as: Mr. Omar Hassan | Grade 12 Economics | Al-Hekma International School
+
+Keep it under 200 words. Write in formal English appropriate for Bahraini school communication.`;
+
+  return await callClaude('You are a professional school teacher writing parent emails.', prompt, 350);
+}
+
+async function openEmailDrawer(student) {
+  currentEmailStudent = student;
+  currentTone = 'professional';
+  document.getElementById('drawer-for').textContent = student;
+  document.getElementById('sent-ok').style.display = 'none';
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('act'));
+  document.getElementById('tone-prof').classList.add('act');
+  document.getElementById('email-drawer').classList.add('open');
+  await loadEmailDraft();
+}
+
+async function loadEmailDraft() {
+  if (emailGenerating) return;
+  emailGenerating = true;
+  const el = document.getElementById('email-txt');
+  const cur = document.getElementById('email-cur');
+  el.textContent = '';
+  cur.style.display = 'inline-block';
+  document.getElementById('email-prev').scrollTop = 0;
+  
+  // Show loading
+  el.textContent = 'AI is drafting your email...';
+  
+  const reply = await generateEmail(currentEmailStudent, currentTone);
+  el.textContent = '';
+  
+  if (reply) {
+    streamTextInto(el, reply, () => {
+      cur.style.display = 'none';
+      emailGenerating = false;
+    });
+  } else {
+    el.textContent = 'Connection error. Please try again.';
+    cur.style.display = 'none';
+    emailGenerating = false;
+  }
+}
+
+async function setTone(tone, btn) {
+  currentTone = tone;
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('act'));
+  btn.classList.add('act');
+  emailGenerating = false;
+  await loadEmailDraft();
+}
+
+function closeDrawer() {
+  document.getElementById('email-drawer').classList.remove('open');
+  emailGenerating = false;
+}
+
+function sendEmail() {
+  const ok = document.getElementById('sent-ok');
+  ok.style.display = 'block';
+  ok.textContent = `✓ Email sent to parent of ${currentEmailStudent} successfully!`;
+  setTimeout(() => { closeDrawer(); notify(`📧 Email sent to parent of ${currentEmailStudent}`); }, 1400);
+}
+
+function editEmailDraft() {
+  const prev = document.getElementById('email-prev');
+  const txt = document.getElementById('email-txt').textContent;
+  prev.innerHTML = '';
+  const ta = document.createElement('textarea');
+  ta.value = txt;
+  ta.style.cssText = 'width:100%;height:180px;border:none;background:transparent;font-family:var(--font);font-size:13px;color:var(--gray700);line-height:1.75;outline:none;resize:none;';
+  prev.appendChild(ta);
+  ta.focus();
+  notify('✏️ Draft is editable — make changes then Send');
+}
+
+// ═══════════════════════════════════════════════════
+// MAGIC DROP — Real AI lesson plan generator
+// ═══════════════════════════════════════════════════
+let magicIngesting = false;
+let animId2 = null, pCtx2 = null;
+let currentLessonTopic = 'Market Failure';
+let selectedPathwayIdx = 1;
+let generatedPathways = null;
+
+async function generateLessonPathways(topic) {
+  const prompt = `You are Nexus AI, a lesson planning assistant for IB Economics at Al-Hekma International School, Bahrain.
+
+Topic: ${topic}
+Teacher: Mr. Omar Hassan, Grade 12 Economics HL, 28 students
+Class performance: Average 76.4%. 3 at-risk students. 
+
+Generate 3 distinct 50-minute lesson pathways for this topic. Return ONLY valid JSON:
+
+{
+  "pathways": [
+    {
+      "letter": "Pathway A",
+      "style": "Visual Storytelling",  
+      "desc": "Brief description (20 words)",
+      "tags": ["tag1", "tag2"],
+      "agenda": [
+        {"time": "00–05", "color": "blue", "activity": "activity description"},
+        {"time": "05–15", "color": "gold", "activity": "activity description"},
+        {"time": "15–30", "color": "none", "activity": "activity description"},
+        {"time": "30–42", "color": "teal", "activity": "activity description"},
+        {"time": "42–50", "color": "green", "activity": "activity description"}
+      ]
+    },
+    {
+      "letter": "Pathway B ⭐ Recommended",
+      "style": "Case-Study Deep Dive",
+      "desc": "Brief description (20 words)",
+      "tags": ["tag1", "tag2"],
+      "agenda": [...]
+    },
+    {
+      "letter": "Pathway C",
+      "style": "Analytical & Data Focus",
+      "desc": "Brief description (20 words)",
+      "tags": ["tag1", "tag2"],
+      "agenda": [...]
+    }
+  ]
+}
+
+Use Bahrain-specific real examples (traffic, oil, GCC data, local policy) in the activities. Reference IB command terms.`;
+
+  const reply = await callClaude('You are an IB lesson planning AI. Return only valid JSON.', prompt, 1000);
+  if (!reply) return null;
+  
+  try {
+    const clean = reply.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  } catch(e) {
+    console.error('Parse error:', e);
+    return null;
+  }
+}
+
+async function startIngestion() {
+  if (magicIngesting) return;
+  magicIngesting = true;
+  const zone = document.getElementById('md-zone');
+  zone.classList.add('proc');
+  document.getElementById('md-icon').textContent = '⚡';
+  document.getElementById('md-title').textContent = 'Processing Market_Failure_Gr12.pptx...';
+  document.getElementById('md-sub').textContent = 'Extracting slides · Building RAG index...';
+  document.getElementById('md-chips').style.display = 'none';
+  
+  startParticles();
+  let pct = 0;
+  const steps = ['Extracting slides...','Chunking content...','Generating embeddings...','Indexing Weaviate...','Building 3 AI pathways...'];
+  let si = 0;
+  const progIv = setInterval(() => {
+    pct = Math.min(pct + 1.5, 95);
+    document.getElementById('prog-fill').style.width = pct + '%';
+    if (si < steps.length && pct > si * 20) document.getElementById('prog-lbl').textContent = steps[si++];
+  }, 50);
+  
+  currentLessonTopic = 'Market Failure';
+  const result = await generateLessonPathways(currentLessonTopic);
+  
+  clearInterval(progIv);
+  document.getElementById('prog-fill').style.width = '100%';
+  
+  setTimeout(() => {
+    zone.classList.remove('proc');
+    stopParticles();
+    magicIngesting = false;
+    document.getElementById('md-icon').textContent = '✅';
+    document.getElementById('md-title').textContent = 'Processing Complete!';
+    document.getElementById('md-sub').textContent = '24 slides · 3 AI pathways ready';
+    
+    if (result && result.pathways) {
+      generatedPathways = result;
+    } else {
+      generatedPathways = getFallbackPathways(currentLessonTopic);
+    }
+    selectedPathwayIdx = 1;
+    renderPathways(generatedPathways, currentLessonTopic);
+    document.getElementById('pathway-area').style.display = 'block';
+  }, 500);
+}
+
+async function loadExistingPathways(key) {
+  const topicMap = { econ: 'Market Failure', supply: 'Demand & Supply', syllabus: 'IB Economics Exam Strategy' };
+  currentLessonTopic = topicMap[key] || 'Market Failure';
+  
+  document.getElementById('pathway-area').style.display = 'none';
+  document.getElementById('pathway-area').innerHTML = '<div style="padding:20px;text-align:center;color:var(--blue);">🤖 Generating pathways with AI...</div>';
+  document.getElementById('pathway-area').style.display = 'block';
+  
+  const result = await generateLessonPathways(currentLessonTopic);
+  
+  if (result && result.pathways) {
+    generatedPathways = result;
+  } else {
+    generatedPathways = getFallbackPathways(currentLessonTopic);
+  }
+  selectedPathwayIdx = 1;
+  renderPathways(generatedPathways, currentLessonTopic);
+}
+
+function renderPathways(data, topic) {
+  const colorMap = { blue: 'ag-blue', gold: 'ag-gold', teal: 'ag-teal', green: 'ag-green', red: 'ag-red', none: '' };
+  const selClasses = ['sel-a', 'sel-b', 'sel-c'];
+  const letterColors = ['var(--blue2)', 'var(--gold)', 'var(--teal)'];
+  
+  let html = `<div class="card"><div class="card-hd"><div><div class="ct">3 AI Pathways — ${topic}</div><div class="cs">Click a pathway to see the 50-minute agenda</div></div></div>
+  <div class="pw-grid">`;
+  
+  data.pathways.forEach((p, i) => {
+    const sel = selectedPathwayIdx === i ? selClasses[i] : '';
+    const tags = (p.tags || []).map(t => `<span class="badge b-nu" style="margin-right:4px;">${t}</span>`).join('');
+    html += `<div class="pw ${sel}" id="pw-${i}" onclick="selectPathway(${i})">
+      <div class="pw-letter" style="color:${letterColors[i]}">${p.letter || 'Pathway ' + (i+1)}</div>
+      <div class="pw-title">${p.style || 'Approach ' + (i+1)}</div>
+      <div class="pw-desc">${p.desc || ''}</div>
+      <div style="margin-top:10px;">${tags}</div>
+      <div class="pw-ck" style="color:${letterColors[i]}">✓ Selected</div>
+    </div>`;
+  });
+  
+  html += '</div>';
+  
+  // Agenda for selected pathway
+  const pw = data.pathways[selectedPathwayIdx] || data.pathways[0];
+  html += `<div style="background:var(--gray50);border-radius:10px;padding:18px 20px;margin-top:4px;">
+    <div style="font-size:13px;font-weight:700;color:var(--gray900);margin-bottom:12px;">📋 50-Minute Agenda — ${pw.style || 'Selected Pathway'}</div>`;
+  
+  (pw.agenda || []).forEach(item => {
+    const cls = colorMap[item.color] || '';
+    html += `<div class="ag-row"><div class="ag-t">${item.time}</div><div class="ag-b ${cls}">${item.activity}</div></div>`;
+  });
+  
+  html += `<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+    <button class="btn btn-go btn-sm" onclick="notify('📥 Downloading lesson plan PDF...')">📥 Download PDF</button>
+    <button class="btn btn-wh btn-sm" onclick="notify('📤 Agenda shared with students on Nexus')">📤 Share with Class</button>
+    <button class="btn btn-wh btn-sm" onclick="openEmailDrawer('All Students')">📬 Email Parents</button>
+  </div></div></div>`;
+  
+  document.getElementById('pathway-area').innerHTML = html;
+}
+
+function selectPathway(i) { selectedPathwayIdx = i; renderPathways(generatedPathways, currentLessonTopic); }
+
+function getFallbackPathways(topic) {
+  return { pathways: [
+    { letter: 'Pathway A', style: 'Visual Storytelling', desc: 'Diagram-led, concept maps and Bahrain case images.', tags: ['Visual', 'Diagrams'],
+      agenda: [{time:'00–05',color:'blue',activity:`Starter: Show Bahrain traffic congestion photo — "What economic problem is this?"`},{time:'05–15',color:'gold',activity:`Direct instruction: ${topic} — 4 types with Bahrain examples`},{time:'15–30',color:'none',activity:'Groups create concept maps linking causes to government responses'},{time:'30–42',color:'teal',activity:'Gallery walk — annotate other groups\' maps'},{time:'42–50',color:'green',activity:'Exit: 3-question Nexus quiz, AI flags gaps'}]},
+    { letter: 'Pathway B ⭐ Recommended', style: 'Case-Study Deep Dive', desc: 'Bahrain real-world scenarios with IB evaluation practice.', tags: ['Bahrain', 'Case Study', 'IB Skills'],
+      agenda: [{time:'00–05',color:'blue',activity:'Starter: Kahoot — "Name a real externality you saw this week"'},{time:'05–15',color:'gold',activity:`Direct instruction: ${topic} theory with Bahrain policy responses`},{time:'15–30',color:'none',activity:'Group case study: Bahrain traffic or healthcare — stakeholder analysis'},{time:'30–42',color:'teal',activity:'Groups present findings using IB evaluate command term'},{time:'42–50',color:'green',activity:'Exit quiz — 4 questions, AI flags at-risk students live'}]},
+    { letter: 'Pathway C', style: 'Analytical & Data', desc: 'GCC datasets, formula derivations, quantitative IB approach.', tags: ['Data', 'Calculations'],
+      agenda: [{time:'00–05',color:'blue',activity:'Starter: Calculate welfare loss from Bahrain data set'},{time:'05–15',color:'gold',activity:'Direct instruction: Derive deadweight loss with numerical example'},{time:'15–30',color:'none',activity:'Problem set: 5 quantitative questions from IB past papers'},{time:'30–42',color:'teal',activity:'Peer marking with mark scheme — discuss errors'},{time:'42–50',color:'green',activity:'Exit: One timed unseen calculation — 8 minutes'}]}
+  ]};
+}
+
+function startParticles() {
+  const c = document.getElementById('pcanvas'); if (!c) return;
+  pCtx2 = c.getContext('2d'); c.width = c.offsetWidth; c.height = c.offsetHeight;
+  const pts = [];
+  for (let i = 0; i < 35; i++) pts.push({ x: Math.random()*c.width, y: Math.random()*c.height, vx: (Math.random()-.5)*1.2, vy: (Math.random()-.5)*1.2, r: Math.random()*3+1, l: Math.random() });
+  function anim() {
+    if (!pCtx2) return;
+    pCtx2.clearRect(0, 0, c.width, c.height);
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.l += .01;
+      if (p.x < 0 || p.x > c.width) p.vx *= -1;
+      if (p.y < 0 || p.y > c.height) p.vy *= -1;
+      const a = .25 + .25 * Math.sin(p.l * 3);
+      pCtx2.beginPath(); pCtx2.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      pCtx2.fillStyle = `rgba(217,119,6,${a})`; pCtx2.fill();
+    });
+    animId2 = requestAnimationFrame(anim);
+  }
+  anim();
+}
+function stopParticles() {
+  if (animId2) { cancelAnimationFrame(animId2); animId2 = null; }
+  if (pCtx2) { const c = document.getElementById('pcanvas'); if(c) pCtx2.clearRect(0,0,c.width,c.height); pCtx2 = null; }
+}
+
+// ═══════════════════════════════════════════════════
+// AI CHAT BOT — Real bilingual Nexus Concierge
+// ═══════════════════════════════════════════════════
+let botConversation = [];
+let botLang = 'en';
+let botOpen = false;
+let botTyping = false;
+
+function getBotSystemPrompt() {
+  return `You are the Nexus Concierge AI assistant for Al-Hekma International School (AHIS), Bahrain.
+You help parents and students with questions about school performance, grades, attendance, deadlines, and meeting bookings.
+
+${STUDENT_CONTEXT}
+
+Language: ${botLang === 'ar' ? 'Arabic — respond entirely in Arabic (Modern Standard Arabic), warm and respectful tone.' : 'English — warm, helpful, concise.'}
+
+Keep responses under 80 words. Be specific with the student's actual data. 
+If asked about booking a meeting, tell them to use the "Book Meeting" section.
+Do not make up information beyond what is in the student context.`;
+}
+
+async function sendBot() {
+  if (botTyping) return;
+  const inp = document.getElementById('bw-inp');
+  const val = inp.value.trim(); if (!val) return;
+  inp.value = '';
+  botTyping = true;
+  const ar = botLang === 'ar';
+  
+  const msgs = document.getElementById('bw-msgs');
+  msgs.innerHTML += `<div class="bubble bbl-usr ${ar?'bbl-ar':''}" style="animation:fu .3s both">${escHtml(val)}</div>`;
+  msgs.innerHTML += `<div class="typing" id="btyping"><span></span><span></span><span></span></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  
+  botConversation.push({ role: 'user', content: val });
+  
+  const reply = await callClaudeConversation(getBotSystemPrompt(), botConversation, 200);
+  
+  const t = document.getElementById('btyping'); if (t) t.remove();
+  
+  if (reply) {
+    botConversation.push({ role: 'assistant', content: reply });
+    const div = document.createElement('div');
+    div.className = `bubble bbl-ai ${ar?'bbl-ar':''}`;
+    div.style.animation = 'fu .3s both';
+    msgs.appendChild(div);
+    streamTextInto(div, reply, () => { msgs.scrollTop = msgs.scrollHeight; });
+  } else {
+    msgs.innerHTML += `<div class="bubble bbl-ai">Sorry, couldn't connect. Please try again.</div>`;
+  }
+  botTyping = false;
+}
+
+function toggleBot() { botOpen = !botOpen; document.getElementById('bot-win').classList.toggle('closed', !botOpen); }
+function setLang(lang, btn) {
+  botLang = lang; botConversation = [];
+  document.querySelectorAll('.lng').forEach(b => b.classList.remove('act')); btn.classList.add('act');
+  const msgs = document.getElementById('bw-msgs');
+  msgs.innerHTML = lang === 'ar'
+    ? '<div class="bubble bbl-ai bbl-ar">مرحباً! أنا مساعد نيكسوس الذكي. يمكنني مساعدتك بأسئلة حول درجات يوسف وحضوره ومواعيده المدرسية. ماذا تريد أن تعرف؟ 👋</div>'
+    : '<div class="bubble bbl-ai">Hi! I\'m Nexus Concierge. Ask me anything about Yousif\'s grades, attendance, upcoming deadlines, or how to book a meeting with his teachers. 👋</div>';
+}
+
+// ═══════════════════════════════════════════════════
+// STUDENT AI PROFILE GENERATOR — Real AI
+// ═══════════════════════════════════════════════════
+async function openRag(name, icon, unit, welcome) {
+  const key = name.toLowerCase().replace(/[^a-z]/g,'').substring(0,12);
+  currentRagSubject = key;
+  if (!ragConversations[key]) ragConversations[key] = [];
+  
+  document.getElementById('rp-ic').textContent = icon;
+  document.getElementById('rp-name').textContent = name;
+  document.getElementById('rp-hint').textContent = unit + ' · AI Study Chat';
+  
+  const msgs = document.getElementById('rp-msgs');
+  msgs.innerHTML = '';
+  
+  // If it's a student profile (teacher view), generate AI profile
+  if (unit.includes('Profile') || unit.includes('profile')) {
+    msgs.innerHTML = '<div class="typing" id="rtyping"><span></span><span></span><span></span></div>';
+    
+    const profilePrompt = `Generate a brief AI student profile for ${name} for Mr. Hassan's Economics class.
+${SCHOOL_CONTEXT}
+Student data context: ${welcome}
+
+Write a 3-sentence teacher-facing insight: current performance, root cause of any issues, and one specific actionable recommendation. Keep it professional and under 60 words.`;
+    
+    const reply = await callClaude('You are an AI student performance analyst for an IB school.', profilePrompt, 150);
+    const t = document.getElementById('rtyping'); if(t) t.remove();
+    
+    const intro = reply || welcome;
+    msgs.innerHTML = `<div class="msg msg-ai" style="animation:fu .3s both">📊 <strong>AI Profile — ${name}</strong><br><br>${intro}<br><br>Ask me anything about this student, or type "email" to draft a parent communication.</div>`;
+  } else {
+    // Subject chat — show welcome + generate first AI message
+    msgs.innerHTML = '<div class="typing" id="rtyping"><span></span><span></span><span></span></div>';
+    
+    const sysPrompt = getRagSystemPrompt(name, unit);
+    const firstMsg = `Start the tutoring session with a brief warm welcome (1 sentence), then immediately give the most important thing ${name.includes('HL') ? 'Yousif' : 'the student'} should focus on right now for ${unit}. Be specific and actionable. Max 70 words.`;
+    
+    const reply = await callClaude(sysPrompt, firstMsg, 150);
+    const t = document.getElementById('rtyping'); if(t) t.remove();
+    
+    const firstResponse = reply || welcome;
+    ragConversations[key] = [{ role: 'assistant', content: firstResponse }];
+    msgs.innerHTML = `<div class="msg msg-ai" style="animation:fu .3s both">${firstResponse}</div>`;
+  }
+  
+  document.getElementById('rag-panel').classList.add('open');
+}
+
+function closeRag() { document.getElementById('rag-panel').classList.remove('open'); }
+
+// ═══════════════════════════════════════════════════
+// QUIZ — Real AI question generation
+// ═══════════════════════════════════════════════════
+let quizSubj = '', quizIndex = 0, quizScore = 0, quizAnswered = false;
+let quizQuestions = null;
+let quizGenerating = false;
+
+const quizSubjectData = {
+  econ: { name: 'Economics HL', topic: 'Market Failure, Externalities, and Government Intervention', emoji: '📊' },
+  bio: { name: 'Biology HL', topic: 'Genetics, Inheritance patterns, and Cell Respiration', emoji: '🧬' },
+  math: { name: 'Mathematics AA HL', topic: 'Calculus — Integration, Differential Equations, and Maclaurin Series', emoji: '📐' }
+};
+
+async function startQuiz(subj) {
+  if (quizGenerating) return;
+  quizGenerating = true;
+  quizSubj = subj;
+  quizIndex = 0; quizScore = 0;
+  
+  document.getElementById('quiz-select').style.display = 'none';
+  const area = document.getElementById('quiz-area');
+  area.style.display = 'block';
+  const sd = quizSubjectData[subj];
+  area.innerHTML = `<div class="card" style="text-align:center;padding:40px;">
+    <div style="font-size:40px;margin-bottom:12px;">${sd.emoji}</div>
+    <div style="font-size:15px;font-weight:700;color:var(--gray900);margin-bottom:8px;">Generating your quiz...</div>
+    <div style="font-size:13px;color:var(--gray500);">AI is creating 5 personalised questions for ${sd.name}</div>
+    <div class="typing" style="margin:16px auto;width:fit-content;"><span></span><span></span><span></span></div>
+  </div>`;
+  
+  const prompt = `Generate 5 IB ${sd.name} multiple-choice questions on: ${sd.topic}
+For a Grade 12 student in Bahrain at an average of ${subj==='bio'?'74%':subj==='math'?'89%':'82%'}.
+${subj==='bio'?'Focus on Genetics and inheritance since the student dropped marks in Cell Respiration.':''}
+${subj==='econ'?'Include one question with a Bahrain/Gulf real-world example.':''}
+
+Return ONLY valid JSON:
+{
+  "questions": [
+    {
+      "q": "question text",
+      "opts": ["A) option", "B) option", "C) option", "D) option"],
+      "ans": 0,
+      "exp": "explanation of correct answer (max 40 words)"
+    }
+  ]
+}
+ans is 0-indexed. All 5 questions required.`;
+
+  const reply = await callClaude('You are an IB examiner creating practice questions. Return only valid JSON.', prompt, 800);
+  quizGenerating = false;
+  
+  if (reply) {
+    try {
+      const clean = reply.replace(/```json|```/g,'').trim();
+      quizQuestions = JSON.parse(clean).questions;
+    } catch(e) { quizQuestions = null; }
+  }
+  
+  if (!quizQuestions || quizQuestions.length < 3) {
+    quizQuestions = getStaticQuizQuestions(subj);
+  }
+  
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const qs = quizQuestions;
+  const area = document.getElementById('quiz-area');
+  const sd = quizSubjectData[quizSubj];
+  
+  if (quizIndex >= qs.length) {
+    area.innerHTML = `<div class="card" style="text-align:center;padding:40px;">
+      <div style="font-size:48px;margin-bottom:16px;">🎉</div>
+      <h1 style="font-size:24px;font-weight:800;margin-bottom:8px;">Quiz Complete!</h1>
+      <div style="font-size:18px;color:var(--gray500);margin-bottom:20px;">You scored <strong style="color:var(--blue);font-size:28px;">${quizScore}/${qs.length}</strong></div>
+      <div style="padding:14px;background:${quizScore>=4?'var(--green-l)':quizScore>=3?'var(--gold-l)':'var(--red-l)'};border-radius:10px;font-size:14px;color:var(--gray700);margin-bottom:20px;">
+        ${quizScore===5?'🏆 Perfect score!':quizScore>=4?'🌟 Great job — almost perfect!':quizScore>=3?'👍 Good effort — review the ones you missed.':'📚 Keep practising — use the AI Study Chat to review these topics.'}
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-bl" onclick="startQuiz('${quizSubj}')">🔄 New Quiz</button>
+        <button class="btn btn-wh" onclick="document.getElementById('quiz-select').style.display='block';document.getElementById('quiz-area').style.display='none';">← Change Subject</button>
+        <button class="btn btn-wh" onclick="openRag('${sd.name}','${sd.emoji}','${sd.topic}','Let me help you review the questions you found difficult. What topic would you like to go through?')">🤖 Review with AI</button>
+      </div>
+    </div>`;
+    return;
+  }
+  
+  quizAnswered = false;
+  const q = qs[quizIndex];
+  area.innerHTML = `<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;">${sd.name} · Q${quizIndex+1}/${qs.length}</div>
+      <div style="font-size:13px;font-weight:600;color:var(--gray500)">Score: ${quizScore}/${quizIndex}</div>
+    </div>
+    <div style="height:4px;background:var(--gray100);border-radius:2px;margin-bottom:18px;overflow:hidden;">
+      <div style="height:100%;background:var(--blue);width:${(quizIndex/qs.length)*100}%;transition:.3s;border-radius:2px;"></div>
+    </div>
+    <div style="font-size:15px;font-weight:600;color:var(--gray900);margin-bottom:16px;line-height:1.5;">${escHtml(q.q)}</div>
+    <div id="quiz-opts">${(q.opts||[]).map((opt,i)=>`
+      <div class="quiz-opt" onclick="answerQuiz(${i})" id="qopt-${i}">
+        <span style="width:24px;height:24px;border-radius:50%;background:var(--gray100);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-right:6px;">${String.fromCharCode(65+i)}</span>${escHtml(opt)}
+      </div>`).join('')}
+    </div>
+    <div id="quiz-exp" style="display:none;padding:14px;background:var(--blue-l);border-radius:10px;margin-top:12px;font-size:13px;color:var(--gray700);line-height:1.6;"></div>
+    <div id="quiz-next" style="display:none;margin-top:12px;">
+      <button class="btn btn-bl" onclick="nextQuestion()">${quizIndex+1<qs.length?'Next Question →':'See Results 🎉'}</button>
+    </div>
+  </div>`;
+}
+
+function answerQuiz(i) {
+  if (quizAnswered) return; quizAnswered = true;
+  const q = quizQuestions[quizIndex];
+  document.querySelectorAll('.quiz-opt').forEach(o => o.classList.add('disabled'));
+  document.getElementById('qopt-'+i).classList.add(i===q.ans?'correct':'wrong');
+  if (i !== q.ans) document.getElementById('qopt-'+q.ans).classList.add('correct');
+  else quizScore++;
+  document.getElementById('quiz-exp').style.display = 'block';
+  document.getElementById('quiz-exp').textContent = '💡 ' + (q.exp || '');
+  document.getElementById('quiz-next').style.display = 'block';
+}
+function nextQuestion() { quizIndex++; renderQuestion(); }
+
+function getStaticQuizQuestions(subj) {
+  const fallbacks = {
+    econ: [{q:'What is a negative externality?',opts:['A) A private cost only','B) A cost imposed on third parties not in the transaction','C) A government tax on production','D) A benefit to producers'],ans:1,exp:'Negative externalities impose costs on third parties outside the market transaction, causing market failure.'},{q:'In a free market with a positive externality, the market will:',opts:['A) Overproduce','B) Produce at the social optimum','C) Underproduce','D) Produce nothing'],ans:2,exp:'Markets undervalue positive externalities since private benefit < social benefit, leading to underproduction.'},{q:'What is the deadweight loss triangle?',opts:['A) Total tax revenue','B) Increase in consumer surplus','C) Net welfare loss from market inefficiency','D) Producer profit'],ans:2,exp:'Deadweight loss is the net welfare lost due to market inefficiency — value destroyed rather than redistributed.'}],
+    bio: [{q:'In a monohybrid cross Aa × Aa, what ratio of offspring will be homozygous recessive?',opts:['A) 0%','B) 25%','C) 50%','D) 75%'],ans:1,exp:'Punnett square gives AA:Aa:aa = 1:2:1, so 25% are homozygous recessive (aa).'},{q:'Which organelle is the primary site of ATP synthesis in aerobic respiration?',opts:['A) Nucleus','B) Ribosome','C) Chloroplast','D) Mitochondria'],ans:3,exp:'The mitochondria contain the electron transport chain and ATP synthase for oxidative phosphorylation.'},{q:'A carrier female (X^H X^h) × normal male (X^H Y): what % of sons are affected?',opts:['A) 0%','B) 25%','C) 50%','D) 100%'],ans:2,exp:'Sons inherit Y from father and either X^H or X^h from mother — 50% chance of inheriting the affected allele.'}],
+    math: [{q:'Evaluate ∫(3x²)dx',opts:['A) x³ + C','B) 6x + C','C) 9x + C','D) x³/3 + C'],ans:0,exp:'Power rule: ∫xⁿ = xⁿ⁺¹/(n+1). So ∫3x²dx = 3·(x³/3) + C = x³ + C.'},{q:'If y = ln(x²+1), find dy/dx',opts:['A) 1/(x²+1)','B) 2x/(x²+1)','C) 2/(x²+1)','D) x/(x²+1)'],ans:1,exp:'Chain rule: d/dx[ln(u)] = u\'/u. Here u = x²+1, u\' = 2x, so dy/dx = 2x/(x²+1).'},{q:'What are the first 3 terms of the Maclaurin series for eˣ?',opts:['A) 1 + x + x²/2','B) 1 + x + x²','C) x + x²/2 + x³/6','D) 1 - x + x²/2'],ans:0,exp:'Maclaurin: f(x) = f(0) + f\'(0)x + f\'\'(0)x²/2! + ... For eˣ all derivatives = 1 at x=0: 1 + x + x²/2.'}]
+  };
+  return fallbacks[subj] || fallbacks.econ;
+}
+
+// ═══════════════════════════════════════════════════
+// MEETING BOOKING
+// ═══════════════════════════════════════════════════
+function selectTeacher(name, subject, key) {
+  const slots = ['Sunday 26 Apr · 3:00 PM','Sunday 26 Apr · 3:30 PM','Tuesday 28 Apr · 2:30 PM','Tuesday 28 Apr · 3:00 PM','Thursday 30 Apr · 3:30 PM','Thursday 30 Apr · 4:00 PM'];
+  document.getElementById('meeting-slots').innerHTML = `
+    <div class="card-hd"><div><div class="ct">Available — ${name}</div><div class="cs">${subject}</div></div></div>
+    <div style="background:var(--teal-l);border:1px solid #A5F3FC;border-radius:8px;padding:12px;font-size:13px;color:var(--teal);margin-bottom:14px;">✓ Nexus has pre-filled the meeting purpose based on Yousif's performance data.</div>
+    ${slots.map(s => `<div class="li" onclick="bookSlot('${s}','${name}')">
+      <div class="li-ic ic-te" style="font-size:14px;">🕐</div>
+      <div><div class="li-name">${s}</div><div class="li-sub">30 min · AHIS Campus</div></div>
+      <div class="li-end"><button class="btn btn-te btn-xs" onclick="event.stopPropagation();bookSlot('${s}','${name}')">Book</button></div>
+    </div>`).join('')}`;
+}
+
+function bookSlot(slot, teacher) {
+  document.getElementById('meeting-slots').innerHTML = `<div style="text-align:center;padding:30px;">
+    <div style="font-size:48px;margin-bottom:16px;">✅</div>
+    <div style="font-size:16px;font-weight:700;color:var(--gray900);margin-bottom:8px;">Meeting Confirmed!</div>
+    <div style="font-size:13px;color:var(--gray500);margin-bottom:16px;">${teacher}<br>${slot}<br>AHIS Campus</div>
+    <div style="background:var(--blue-l);border-radius:10px;padding:14px;font-size:13px;color:var(--blue);margin-bottom:16px;">📧 Calendar invite sent to your registered email.</div>
+    <button class="btn btn-wh" onclick="showView('p-home');setNavActive('ni-phome')">← Back to Dashboard</button>
+  </div>`;
+  notify(`📅 Meeting with ${teacher} confirmed — ${slot}`);
+}
+
+// ═══════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function streamTextInto(el, text, onDone) {
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i < text.length) { el.textContent += text[i++]; }
+    else { clearInterval(iv); if (onDone) onDone(); }
+  }, 10);
+}
+
+function streamTextIntoEl(container, text, cls, onDone) {
+  const div = document.createElement('div');
+  div.className = cls;
+  div.style.animation = 'fu .3s both';
+  container.appendChild(div);
+  streamTextInto(div, text, onDone);
+}
+
+function notify(msg) {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 2800);
+}
+
+// Attendance calendar
+function buildAttendance() {
+  const grid = document.getElementById('att-grid'); if (!grid) return;
+  const startDay = 3; // April 2026 starts Wednesday
+  const pattern = ['p','p','p','p','p','h','h','p','p','p','p','p','h','h','p','p','a','p','p','h','h','p','t','p','p','p','h','h','p','p'];
+  let html = '';
+  for (let i = 0; i < startDay; i++) html += '<div class="att-day att-h"></div>';
+  pattern.forEach((type, i) => { html += `<div class="att-day att-${type}" onclick="showAttDetail(${i+1},'${type}')" title="April ${i+1}">${i+1}</div>`; });
+  grid.innerHTML = html;
+}
+
+function showAttDetail(d, type) {
+  const labels = { p:'✅ Present — All classes attended', a:'❌ Absent — Medical certificate submitted', h:'🏖️ School holiday', t:'⏰ Late — Arrived 15 minutes late' };
+  const el = document.getElementById('att-detail');
+  el.style.display = 'block'; el.textContent = `April ${d}: ${labels[type]}`;
+}
+
+// Teacher attendance
+const students = ['Yousif Al-Taqi','Hamad Al-Kuwari','Sara Al-Mahmoud','Fatima Al-Rashed','Omar Al-Dosari','Noor Al-Khalifa','Ahmad Al-Sayed','Mariam Al-Dosari','Khalid Al-Qassimi','Hessa Al-Mazrouei'];
+const attStatus = {};
+
+function buildTeacherAttendance() {
+  const el = document.getElementById('att-list'); if (!el) return;
+  el.innerHTML = students.map((s, i) => {
+    const def = i===1||i===2?'absent':i===5?'late':'present';
+    attStatus[s] = def;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--gray100);">
+      <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">${s[0]}</div>
+      <div style="flex:1;font-size:13px;font-weight:600;color:var(--gray800);">${s}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button onclick="markAtt('${s}','present',this)" class="btn btn-sm ${def==='present'?'btn-bl':'btn-gh'}">✅</button>
+        <button onclick="markAtt('${s}','absent',this)" class="btn btn-sm ${def==='absent'?'btn-re':'btn-gh'}">❌</button>
+        <button onclick="markAtt('${s}','late',this)" class="btn btn-sm ${def==='late'?'btn-go':'btn-gh'}">⏰</button>
+      </div>
+    </div>`;
+  }).join('');
+  updateAttCounts();
+}
+
+function markAtt(student, status, btn) {
+  attStatus[student] = status; updateAttCounts();
+  const row = btn.closest('div[style]');
+  row.querySelectorAll('.btn').forEach(b => { b.className = 'btn btn-sm btn-gh'; });
+  btn.className = `btn btn-sm ${status==='present'?'btn-bl':status==='absent'?'btn-re':'btn-go'}`;
+  notify(`✓ ${student} marked as ${status}`);
+}
+
+function updateAttCounts() {
+  const p = Object.values(attStatus).filter(v=>v==='present').length;
+  const a = Object.values(attStatus).filter(v=>v==='absent').length;
+  if (document.getElementById('att-present-count')) document.getElementById('att-present-count').textContent = p;
+  if (document.getElementById('att-absent-count')) document.getElementById('att-absent-count').textContent = a;
+  if (document.getElementById('att-bar')) document.getElementById('att-bar').style.width = (p/students.length*100) + '%';
+}
+
+function filterStudents() {
+  const val = document.getElementById('student-search').value.toLowerCase();
+  document.querySelectorAll('#student-tbody tr').forEach(r => { r.style.display = r.textContent.toLowerCase().includes(val) ? '' : 'none'; });
+}
+
+function editGrade(cell, current) {
+  if (cell.querySelector('input')) return;
+  const inp = document.createElement('input');
+  inp.value = current;
+  inp.style.cssText = 'width:60px;border:1px solid var(--blue);border-radius:4px;padding:3px 6px;font-size:12px;font-family:var(--font);outline:none;';
+  cell.innerHTML = ''; cell.appendChild(inp); inp.focus(); inp.select();
+  const save = () => {
+    const v = inp.value.trim() || current;
+    const pct = parseInt(v);
+    const cls = pct>=80?'b-gr':pct>=65?'b-bl':pct>=50?'b-go':'b-re';
+    cell.innerHTML = `<span class="badge ${cls}">${v}</span>`;
+    notify(`✓ Grade updated to ${v}`);
+  };
+  inp.onblur = save;
+  inp.onkeydown = e => { if(e.key==='Enter') inp.blur(); };
+}
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+let role = 'student';
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('act'));
+  const v = document.getElementById('v-'+id);
+  if (v) { v.classList.add('act'); document.getElementById('ct').scrollTop = 0; }
+  const titles = {'s-home':'Student Dashboard','s-sentinel':'Sentinel AI','s-subjects':'My Subjects','s-grades':'Gradebook','s-attendance':'Attendance','s-quiz':'Practice Quiz','t-home':'Teacher Dashboard','t-drop':'Magic Drop Zone','t-students':'My Students','t-gradebook':'Class Gradebook','t-attendance':'Class Attendance','t-email':'Email Engine','p-home':'Parent Dashboard','p-alerts':'Alerts','p-progress':'Progress Report','p-meeting':'Book Meeting','p-reports':'Reports','settings':'Settings'};
+  const t = titles[id]; if (t) document.getElementById('tb-title').textContent = t;
+  if (id === 'p-meeting') setTimeout(() => selectTeacher('Ms. Fatima Al-Mansoori','Biology HL · Grade drop alert','msbio'), 350);
+  closeSidebar();
+  updateMobNav(id);
+}
+
+function setNavActive(id) {
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('a','ag','at'));
+  const el = document.getElementById(id); if (!el) return;
+  el.classList.add(role==='student'?'a':role==='teacher'?'ag':'at');
+}
+
+function switchRole(r, btn) {
+  if (role === r) return; role = r;
+  document.querySelectorAll('.rbtn').forEach(b => b.classList.remove('act')); btn.classList.add('act');
+  ['nav-s','nav-t','nav-p'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById('nav-'+r[0]).style.display = 'block';
+  const map = {
+    student:{name:'Yousif Al-Taqi',role2:'Grade 12 IB · Student',avc:'av-s',av:'Y',page:'s-home',nav:'ni-shome'},
+    teacher:{name:'Mr. Omar Hassan',role2:'Economics Dept · Teacher',avc:'av-t',av:'H',page:'t-home',nav:'ni-thome'},
+    parent:{name:'Ashraf Al-Taqi',role2:'Parent · Yousif Al-Taqi',avc:'av-p',av:'A',page:'p-home',nav:'ni-phome'}
+  };
+  const d = map[r];
+  const av = document.getElementById('sb-av'); av.textContent = d.av; av.className = 'av ' + d.avc;
+  document.getElementById('sb-name').textContent = d.name;
+  document.getElementById('sb-role').textContent = d.role2;
+  showView(d.page); setNavActive(d.nav);
+  buildMobNav(r);
+}
+
+// ═══════════════════════════════════════════════════
+// MOBILE NAV
+// ═══════════════════════════════════════════════════
+const navIdMap = {'s-home':'ni-shome','s-subjects':'ni-ssubjects','s-sentinel':'ni-ssentinel','s-grades':'ni-sgrades','s-attendance':'ni-sattend','s-quiz':'ni-squiz','t-home':'ni-thome','t-drop':'ni-tdrop','t-students':'ni-tstudents','t-gradebook':'ni-tgrades','t-attendance':'ni-tattend','t-email':'ni-temail','p-home':'ni-phome','p-alerts':'ni-palerts','p-progress':'ni-pprogress','p-meeting':'ni-pmeeting','p-reports':'ni-preports'};
+const mobNavDefs = {
+  student:[{id:'s-home',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z\"/><polyline points=\"9,22 9,12 15,12 15,22\"/></svg>',lbl:'Home'},{id:'s-subjects',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 19.5A2.5 2.5 0 016.5 17H20\"/><path d=\"M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z\"/></svg>',lbl:'Subjects'},{id:'s-sentinel',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\"/></svg>',lbl:'Sentinel'},{id:'s-grades',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><line x1=\"18\" y1=\"20\" x2=\"18\" y2=\"10\"/><line x1=\"12\" y1=\"20\" x2=\"12\" y2=\"4\"/><line x1=\"6\" y1=\"20\" x2=\"6\" y2=\"14\"/></svg>',lbl:'Grades'},{id:'s-quiz',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7\"/><path d=\"M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z\"/></svg>',lbl:'Quiz'}],
+  teacher:[{id:'t-home',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z\"/><polyline points=\"9,22 9,12 15,12 15,22\"/></svg>',lbl:'Home'},{id:'t-drop',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polygon points=\"12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2\"/></svg>',lbl:'Drop'},{id:'t-students',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M23 21v-2a4 4 0 00-3-3.87\"/><path d=\"M16 3.13a4 4 0 010 7.75\"/></svg>',lbl:'Students'},{id:'t-gradebook',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><line x1=\"18\" y1=\"20\" x2=\"18\" y2=\"10\"/><line x1=\"12\" y1=\"20\" x2=\"12\" y2=\"4\"/><line x1=\"6\" y1=\"20\" x2=\"6\" y2=\"14\"/></svg>',lbl:'Grades'},{id:'t-email',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z\"/><polyline points=\"22,6 12,13 2,6\"/></svg>',lbl:'Email'}],
+  parent:[{id:'p-home',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z\"/><polyline points=\"9,22 9,12 15,12 15,22\"/></svg>',lbl:'My Child'},{id:'p-alerts',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9\"/><path d=\"M13.73 21a2 2 0 01-3.46 0\"/></svg>',lbl:'Alerts'},{id:'p-progress',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"23,6 13.5,15.5 8.5,10.5 1,18\"/><polyline points=\"17,6 23,6 23,12\"/></svg>',lbl:'Progress'},{id:'p-meeting',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"18\" rx=\"2\"/><line x1=\"16\" y1=\"2\" x2=\"16\" y2=\"6\"/><line x1=\"8\" y1=\"2\" x2=\"8\" y2=\"6\"/><line x1=\"3\" y1=\"10\" x2=\"21\" y2=\"10\"/></svg>',lbl:'Meeting'},{id:'p-reports',ic:'<svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z\"/><polyline points=\"14,2 14,8 20,8\"/></svg>',lbl:'Reports'}]
+};
+let currentMobView = 's-home';
+
+function buildMobNav(r) {
+  const nav = document.getElementById('mob-nav-inner');
+  const items = mobNavDefs[r] || mobNavDefs.student;
+  const actClass = r==='student'?'act':r==='teacher'?'act-g':'act-t';
+  nav.innerHTML = items.map((item,i) => `<button class="mob-ni${i===0?' '+actClass:''}" id="mob-ni-${item.id}" onclick="showView('${item.id}');setNavActive('${navIdMap[item.id]||''}')"><span class="ic">${item.ic}</span>${item.lbl}</button>`).join('');
+}
+
+function updateMobNav(id) {
+  currentMobView = id;
+  const actClass = role==='student'?'act':role==='teacher'?'act-g':'act-t';
+  document.querySelectorAll('.mob-ni').forEach(b => b.classList.remove('act','act-g','act-t'));
+  const el = document.getElementById('mob-ni-'+id); if (el) el.classList.add(actClass);
+}
+
+function toggleSidebar() {
+  document.getElementById('sb').classList.toggle('open');
+  document.getElementById('sb-overlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('show');
+}
+
+function showHelpModal() { document.getElementById('help-modal').style.display = 'flex'; }
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  buildAttendance();
+  buildTeacherAttendance();
+  buildMobNav('student');
+  
+  // Help modal backdrop close
+  const hm = document.getElementById('help-modal');
+  if (hm) hm.addEventListener('click', e => { if (e.target === hm) hm.style.display = 'none'; });
+  
+  // Keyboard for RAG + bot
+  document.getElementById('rp-inp').addEventListener('keydown', e => { if(e.key==='Enter') sendRag(); });
+  document.getElementById('bw-inp').addEventListener('keydown', e => { if(e.key==='Enter') sendBot(); });
+  
+  // Swipe to close RAG
+  const rp = document.getElementById('rag-panel');
+  let tX = 0;
+  rp.addEventListener('touchstart', e => { tX = e.touches[0].clientX; }, {passive:true});
+  rp.addEventListener('touchend', e => { if (e.changedTouches[0].clientX - tX > 80) closeRag(); }, {passive:true});
+  
+  // Swipe to close drawer
+  const dr = document.getElementById('email-drawer');
+  let dY = 0;
+  dr.addEventListener('touchstart', e => { dY = e.touches[0].clientY; }, {passive:true});
+  dr.addEventListener('touchend', e => { if (e.changedTouches[0].clientY - dY > 80) closeDrawer(); }, {passive:true});
+});
+
+
+
+
+/* ─── SPLASH JS ─── */
+(function(){
+  var fill  = document.getElementById('splash-fill');
+  var lbl   = document.getElementById('splash-lbl');
+  var el    = document.getElementById('splash');
+  var msgs  = ['Initialising...','Loading AI engine...','Almost ready...','Welcome!'];
+  var pct = 0, step = 0;
+  function tick(){
+    pct += 24 + Math.random() * 14;
+    if(pct > 100) pct = 100;
+    if(fill) fill.style.width = pct + '%';
+    if(lbl && step < msgs.length) lbl.textContent = msgs[step++];
+    if(pct < 100){ setTimeout(tick, 380); }
+    else {
+      setTimeout(function(){
+        if(el) el.classList.add('hide');
+        setTimeout(function(){ if(el) el.style.display='none'; }, 600);
+      }, 350);
+    }
+  }
+  setTimeout(tick, 120);
+})();
+/* ─── END SPLASH JS ─── */
+
+</script>
+</body>
+</html>
